@@ -1,0 +1,109 @@
+<form class="auth-form" #authForm="ngForm" (ngSubmit)="onSubmit()">
+  <h3 class="form-title">{{ isSignupForm() ? 'Signup' : 'Login' }}</h3>
+
+  @if (isSignupForm()) {
+    <label class="form-label" for="name">Name</label>
+    <input
+      class="form-input"
+      id="name"
+      type="text"
+      name="name"
+      [(ngModel)]="formData.name"
+      #name="ngModel"
+      required
+    />
+    @if (name.invalid && (name.touched || name.dirty)) {
+      <div class="error-message">Name is required</div>
+    }
+  }
+
+  <label class="form-label" for="email">Email</label>
+  <input
+    class="form-input"
+    id="email"
+    type="email"
+    name="email"
+    [(ngModel)]="formData.email"
+    #email="ngModel"
+    required
+    email
+  />
+  @if (email.invalid && (email.touched || email.dirty)) {
+    @if (email.hasError('required')) {
+      <div class="error-message">Email is required</div>
+    } @else {
+      <div class="error-message">Invalid Email</div>
+    }
+  }
+
+  @if (isSignupForm()) {
+    <label class="form-label" for="role">Role</label>
+    <select
+      class="form-input"
+      name="role"
+      id="role"
+      [(ngModel)]="formData.role"
+      #role="ngModel"
+      required
+    >
+      @for (role of userRoles; track $index) {
+        <option [value]="role">{{ role }}</option>
+      }
+    </select>
+
+    @if (role.invalid && (role.touched || role.dirty)) {
+      <div class="error-message">Please select a Role</div>
+    }
+  }
+
+  <label class="form-label" for="password">Password</label>
+  <input
+    class="form-input"
+    type="text"
+    id="password"
+    name="password"
+    [(ngModel)]="formData.password"
+    #password="ngModel"
+    required
+    minlength="6"
+  />
+  @if (password.invalid && (password.touched || password.dirty)) {
+    @if (password.hasError('required')) {
+      <div class="error-message">Password is required</div>
+    } @else if (password.hasError('minlength')) {
+      <div class="error-message">Password should be atleast 6 chars long</div>
+    }
+  }
+
+  @if (isSignupForm()) {
+    <label class="form-label" for="confirmPassword">Confirm Password</label>
+    <input
+      class="form-input"
+      type="text"
+      id="confirmPassword"
+      name="confirmPassword"
+      [(ngModel)]="formData.confirmPassword"
+      #confirmPassword="ngModel"
+      required
+      minlength="6"
+    />
+    @if (confirmPassword.invalid && (confirmPassword.touched || confirmPassword.dirty)) {
+      @if (confirmPassword.hasError('required')) {
+        <div class="error-message">Confirm Password is required</div>
+      } @else if (password.value !== confirmPassword.value) {
+        <div class="error-message">Passwords don't match.</div>
+      }
+    }
+  }
+
+  <button class="submit-btn" [disabled]="!authForm.form.valid">
+    {{ isSignupForm() ? 'Signup' : 'Login' }}
+  </button>
+</form>
+<div class="link-container">
+  <span>{{ isSignupForm() ? 'Already have an account ' : "Don't have an account " }}</span>
+  <a [routerLink]="isSignupForm() ? '/login' : '/signup'">{{
+    isSignupForm() ? 'Login' : 'Signup'
+  }}</a
+  >
+</div>

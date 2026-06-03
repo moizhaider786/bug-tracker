@@ -25,6 +25,7 @@ export class AuthService {
       email: newUser.email,
       name: newUser.name,
       role: newUser.role,
+      createdAt: newUser.createdAt,
     };
   }
 
@@ -38,6 +39,7 @@ export class AuthService {
       email: user.email,
       name: user.name,
       role: user.role,
+      createdAt: user.createdAt,
       access_token: await this.jwtService.signAsync({
         id: user.id,
         email: user.email,

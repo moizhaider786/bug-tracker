@@ -1,0 +1,44 @@
+import { Component, inject, signal, effect } from '@angular/core';
+import { AuthFormComponent } from './auth-form/auth-form.component';
+import { ActivatedRoute } from '@angular/router';
+
+@Component({
+  selector: 'app-auth-page',
+  imports: [AuthFormComponent],
+  template: `
+    <div class="page-container">
+      <h1>Welcome to Bug Tracker</h1>
+      <app-auth-form [isSignupForm]="isSignupForm()"></app-auth-form>
+    </div>
+  `,
+  styles: [
+    `
+      .page-container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 3rem;
+      }
+
+      h1 {
+        margin-bottom: 1rem;
+      }
+    `,
+  ],
+})
+export class AuthPageComponent {
+  private activatedRoute = inject(ActivatedRoute);
+  isSignupForm = signal<boolean>(true);
+
+  constructor() {
+    effect(() => {
+      this.activatedRoute.url.subscribe({
+        next: (url) => {
+          console.log(url);
+          this.isSignupForm.set(url[0].path.toLowerCase() === 'signup' ? true : false);
+        },
+      });
+    });
+  }
+}
