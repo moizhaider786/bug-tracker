@@ -1,14 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { PASSWORD_SALT } from 'src/lib/constants';
+import { JwtService } from '@nestjs/jwt';
 
+import { PASSWORD_SALT } from 'src/lib/constants';
 import { UserService } from 'src/user/user.service';
 import { SignupDto } from './dto/signup.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private jwtService: JwtService,
+  ) {}
 
   async signup(dto: SignupDto) {
     const user = await this.userService.findOneByEmail(dto.email);
@@ -20,6 +25,24 @@ export class AuthService {
       email: newUser.email,
       name: newUser.name,
       role: newUser.role,
+    };
+  }
+
+  async login(dto: LoginDto) {
+    const user = await this.userService.findOneByEmail(dto.email);
+    if (!user) throw new NotFoundException('User with given email not found.');
+    const isPasswordMatch = await bcrypt.compare(dto.password, user.password);
+    if (!isPasswordMatch) throw new UnauthorizedException('Incorrect Password');
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      access_token: await this.jwtService.signAsync({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      }),
     };
   }
 }

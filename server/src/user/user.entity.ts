@@ -4,7 +4,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
 } from 'typeorm';
-import { USER_ROLES } from 'src/types';
+import { UserRoles } from 'src/types';
 
 @Entity()
 export class Users {
@@ -20,8 +20,8 @@ export class Users {
   @Column({ type: 'varchar', length: 100, nullable: false })
   name!: string;
 
-  @Column({ type: 'enum', enum: USER_ROLES, nullable: false })
-  role!: USER_ROLES;
+  @Column({ type: 'enum', enum: UserRoles, nullable: false })
+  role!: UserRoles;
 
   @CreateDateColumn()
   createdAt!: Date;
