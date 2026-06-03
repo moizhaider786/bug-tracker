@@ -6,6 +6,6 @@ import type { Request } from 'express';
 export class UserController {
   @Get('profile')
   profile(@Req() request: Request) {
-    console.log(request.user);
+    // console.log(request.user);
   }
 }
