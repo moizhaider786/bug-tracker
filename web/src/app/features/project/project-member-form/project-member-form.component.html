@@ -1,0 +1,13 @@
+<h3>{{ isAddForm() ? 'Add Members' : 'Remove Members' }}</h3>
+<form action="" (ngSubmit)="onSubmit()">
+  <label for="user">Users:</label>
+  <select name="user" id="user">
+    <option value="">Select a user</option>
+    @for (user of users(); track user.id) {
+      <option [value]="user.id">
+        <h4>{{ user.name }}</h4>
+        <p>{{ user.email }}</p>
+      </option>
+    }
+  </select>
+</form>

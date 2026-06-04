@@ -1,0 +1,12 @@
+<div>
+  @for (project of projectService.userProjects(); track project.id) {
+    <div>
+      <h3>{{ project.name }}</h3>
+      <p>{{ project.description }}</p>
+      <button (click)="projectDetails.emit(project.id)">Details</button>
+      <button (click)="editProject.emit(project.id)">Edit</button>
+      <button (click)="addMembers.emit(project.id)">Add Members</button>
+      <button (click)="removeMembers.emit(project.id)">Remove Members</button>
+    </div>
+  }
+</div>

@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { AuthFormComponent } from './auth-form/auth-form.component';
 import { ActivatedRoute } from '@angular/router';
 
@@ -27,18 +27,16 @@ import { ActivatedRoute } from '@angular/router';
     `,
   ],
 })
-export class AuthPageComponent {
+export class AuthPageComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   isSignupForm = signal<boolean>(true);
 
-  constructor() {
-    effect(() => {
-      this.activatedRoute.url.subscribe({
-        next: (url) => {
-          console.log(url);
-          this.isSignupForm.set(url[0].path.toLowerCase() === 'signup' ? true : false);
-        },
-      });
+  ngOnInit() {
+    this.activatedRoute.url.subscribe({
+      next: (url) => {
+        console.log(url);
+        this.isSignupForm.set(url[0].path.toLowerCase() === 'signup' ? true : false);
+      },
     });
   }
 }

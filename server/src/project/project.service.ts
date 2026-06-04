@@ -150,9 +150,6 @@ export class ProjectService {
         'You not authorized to access this project members',
       );
     }
-    return project.projectUsers.map((m) => ({
-      assignedAt: m.assignedAt,
-      ...m.user,
-    }));
+    return project.projectUsers.map((m) => m.user);
   }
 }
