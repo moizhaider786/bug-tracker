@@ -1,5 +1,5 @@
 import { UserRoles } from "src/types"
-import { IsEmail, IsNotEmpty, Length } from "class-validator"
+import { IsEmail, IsNotEmpty, Length, IsEnum } from "class-validator"
 
 export class SignupDto {
     @IsNotEmpty()
@@ -12,5 +12,6 @@ export class SignupDto {
     password!: string
 
     @IsNotEmpty()
+    @IsEnum(UserRoles, {message: "Invalid User Role"})
     role!: UserRoles
 }

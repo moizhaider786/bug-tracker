@@ -9,7 +9,7 @@ import { Users } from 'src/user/user.entity';
 import { Projects } from './project.entity';
 
 @Entity()
-export class Projects_Users {
+export class ProjectsToUsers {
   @PrimaryColumn()
   userId!: number;
 

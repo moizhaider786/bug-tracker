@@ -6,30 +6,32 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  Unique,
 } from 'typeorm';
 import { Users } from '../user/user.entity';
-import { Projects_Users } from './project_user.entity';
+import { ProjectsToUsers } from './project-to-user.entity';
 
 @Entity()
+@Unique('UQ_NAME_CREATEDBY', ['name', 'createdBy'])
 export class Projects {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: 'varchar', length: 100, nullable: false })
+  @Column({ type: 'varchar', length: 100, nullable: false})
   name!: string;
 
-  @Column({ type: 'text' })
-  description!: string;
+  @Column({ type: 'text', nullable: true })
+  description!: string | null;
 
-  @Column({ nullable: false })
+  @Column()
   createdBy!: number;
 
   @ManyToOne(() => Users, (user) => user.createdProjects)
   @JoinColumn({ name: 'createdBy' })
   creator!: Users;
 
-  @OneToMany(() => Projects_Users, (projectUser) => projectUser.project)
-  projectUsers!: Projects_Users[];
+  @OneToMany(() => ProjectsToUsers, (projectUser) => projectUser.project)
+  projectUsers!: ProjectsToUsers[];
 
   @CreateDateColumn()
   createdAt!: Date;
