@@ -1,0 +1,66 @@
+.member-form-container {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  max-width: 600px;
+}
+
+.search-section {
+  margin-bottom: 1rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 5px;
+}
+
+.users-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.user-cards {
+  border: 1px solid #eee;
+  padding: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.user-card {
+  border: 1px solid #ccc;
+  padding: 5px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+}
+
+.user-card:hover {
+  background-color: #f9f9f9;
+}
+
+.user-card.selected {
+  background-color: #e0f7fa;
+}
+
+.role-badge {
+  font-size: 0.8em;
+  background: #eee;
+  padding: 2px 4px;
+}
+
+.empty-state {
+  color: #888;
+}
+
+.form-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  padding: 5px 10px;
+  cursor: pointer;
+}

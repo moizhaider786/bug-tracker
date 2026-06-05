@@ -1,13 +1,65 @@
-<h3>{{ isAddForm() ? 'Add Members' : 'Remove Members' }}</h3>
-<form action="" (ngSubmit)="onSubmit()">
-  <label for="user">Users:</label>
-  <select name="user" id="user">
-    <option value="">Select a user</option>
-    @for (user of users(); track user.id) {
-      <option [value]="user.id">
-        <h4>{{ user.name }}</h4>
-        <p>{{ user.email }}</p>
-      </option>
-    }
-  </select>
-</form>
+<div class="member-form-container">
+  <div class="search-section">
+    <input
+      type="text"
+      [formControl]="searchControl"
+      placeholder="Search users by name or email..."
+      class="search-input"
+    />
+  </div>
+
+  <div class="users-grid">
+    <div class="available-users">
+      <h3>Available Users</h3>
+      <div class="user-cards">
+        @for (user of availableUsers(); track user.id) {
+          <div class="user-card" (click)="selectUser(user)">
+            <div class="user-info">
+              <h4>{{ user.name }}</h4>
+              <p>{{ user.email }}</p>
+              <span class="role-badge">{{ user.role }}</span>
+            </div>
+          </div>
+        } @empty {
+          <p class="empty-state">No users found.</p>
+        }
+      </div>
+    </div>
+
+    <div class="selected-users">
+      <h3>{{ isAddForm() ? 'Selected to Add' : 'Selected to Remove' }}</h3>
+      <div class="user-cards">
+        @for (user of selectedUsers(); track user.id) {
+          <div class="user-card selected" (click)="deselectUser(user)">
+            <div class="user-info">
+              <h4>{{ user.name }}</h4>
+              <p>{{ user.email }}</p>
+            </div>
+            <button class="remove-btn" type="button">&times;</button>
+          </div>
+        } @empty {
+          <p class="empty-state">No users selected.</p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button
+      class="btn-cancel"
+      routerLink="/projects"
+      type="button"
+      (click)="router.navigate(['/projects'])"
+    >
+      Cancel
+    </button>
+    <button
+      class="btn-submit"
+      [disabled]="selectedUsers().length === 0"
+      (click)="onSubmit()"
+      type="button"
+    >
+      {{ isAddForm() ? 'Add Members' : 'Remove Members' }}
+    </button>
+  </div>
+</div>

@@ -33,16 +33,16 @@ export class ProjectService {
   updateProject(id: number, data: updateProjectDto): Observable<Project> {
     return this.http.patch<Project>(`${this.baseUrl}/${id}`, data);
   }
-  addMembers(id: number, memberIds: number[]): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.baseUrl}/${id}/members`, { memberIds });
+  addMembers(id: number, members: number[]): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/${id}/members`, { members });
   }
-  removeMembers(id: number, memberIds: number[]): Observable<{ message: string }> {
+  removeMembers(id: number, members: number[]): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.baseUrl}/${id}/members`, {
-      body: { memberIds },
+      body: { members },
     });
   }
 
-  getProjectMembers(id: number): Observable<{ members: User[] }> {
-    return this.http.get<{ members: User[] }>(`${this.baseUrl}/${id}/members`);
+  getProjectMembers(id: number): Observable<User[]> {
+    return this.http.get<User[]>(`${this.baseUrl}/${id}/members`);
   }
 }

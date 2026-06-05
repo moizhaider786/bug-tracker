@@ -135,21 +135,27 @@ export class ProjectService {
     if (!project) throw new NotFoundException('Project not found');
     return project;
   }
+
   async getProjectMembers(id: number, reqUserId: number) {
     const project = await this.projectRepo.findOne({
       where: { id },
       relations: {
-        projectUsers: true,
+        projectUsers: {
+          user: true,
+        },
       },
     });
-    if (
-      project?.createdBy !== reqUserId ||
-      !project?.projectUsers.some((u) => u.user.id === reqUserId)
-    ) {
+
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+    const isOwner = project.createdBy === reqUserId;
+    const isMember = project.projectUsers.some((u) => u.user?.id === reqUserId);
+    if (!isOwner && !isMember) {
       throw new UnauthorizedException(
-        'You not authorized to access this project members',
+        'You are not authorized to access this project members',
       );
     }
-    return project.projectUsers.map((m) => m.user);
+    return project.projectUsers.map((m) => m.user).filter((user) => !!user); // Filter out any broken structural rows just in case
   }
 }

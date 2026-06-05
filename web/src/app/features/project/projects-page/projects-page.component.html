@@ -1,15 +1,20 @@
-<h1>Projects</h1>
-<button (click)="openProjectForm(false)">Create Project</button>
-@if (isProjectFormVisible()) {
-  <div class="prjform-modal">
-    <button (click)="closeProjectForm()">Close</button>
-    <app-project-form
-      [isEditForm]="isEditProjectForm()"
-      [editProjectId]="editProjectId()"
-    ></app-project-form>
+<div class="projects-page-container">
+  <div class="header-actions">
+    <h1>Projects</h1>
+    <button class="btn-create" (click)="openProjectForm(false)">Create Project</button>
   </div>
-}
 
-<div class="prjlist-container">
-  <app-project-list (editProject)="editProject($event)"></app-project-list>
+  @if (isProjectFormVisible()) {
+    <div class="prjform-modal">
+      <button class="btn-close" (click)="closeProjectForm()">X</button>
+      <app-project-form
+        [isEditForm]="isEditProjectForm()"
+        [editProjectId]="editProjectId()"
+      ></app-project-form>
+    </div>
+  }
+
+  <div class="prjlist-container">
+    <app-project-list (editProject)="editProject($event)"></app-project-list>
+  </div>
 </div>
