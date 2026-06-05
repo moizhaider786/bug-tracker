@@ -1,0 +1,21 @@
+<div>
+  <div>
+    <p>{{ project()?.createdAt }}</p>
+    <p>{{ project()?.name }}</p>
+    <p>{{ project()?.description }}</p>
+  </div>
+  <div>
+    Members:
+    <ul>
+      @for (member of projectMembers(); track $index) {
+        <li>
+          <div>
+            <p>{{ member.name }}</p>
+            <p>{{ member.email }}</p>
+            <p>{{ member.role }}</p>
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</div>
