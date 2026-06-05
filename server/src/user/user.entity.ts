@@ -8,6 +8,7 @@ import {
 import { UserRoles } from 'src/types';
 import { Projects } from 'src/project/project.entity';
 import { ProjectsToUsers } from 'src/project/project-to-user.entity';
+import { Bugs } from 'src/bug/bug.entity';
 
 @Entity()
 export class Users {
@@ -32,6 +33,12 @@ export class Users {
   @OneToMany(()=>ProjectsToUsers, (projectUser)=>projectUser.user)
   assignedProjects!: ProjectsToUsers[]
 
+  @OneToMany(()=>Bugs, (bug)=>bug.developer)
+  assignedBugs!: Bugs[];
+
+  @OneToMany(()=>Bugs, (bug)=>bug.creator)
+  createdBugs!: Bugs[];
+  
   @CreateDateColumn()
   createdAt!: Date;
 }

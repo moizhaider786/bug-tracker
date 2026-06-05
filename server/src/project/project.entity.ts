@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Users } from '../user/user.entity';
 import { ProjectsToUsers } from './project-to-user.entity';
+import { Bugs } from 'src/bug/bug.entity';
 
 @Entity()
 @Unique('UQ_NAME_CREATEDBY', ['name', 'createdBy'])
@@ -17,7 +18,7 @@ export class Projects {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: 'varchar', length: 100, nullable: false})
+  @Column({ type: 'varchar', length: 100, nullable: false })
   name!: string;
 
   @Column({ type: 'text', nullable: true })
@@ -32,6 +33,9 @@ export class Projects {
 
   @OneToMany(() => ProjectsToUsers, (projectUser) => projectUser.project)
   projectUsers!: ProjectsToUsers[];
+
+  @OneToMany(() => Bugs, (bug) => bug.project)
+  bugs!: Bugs[];
 
   @CreateDateColumn()
   createdAt!: Date;
