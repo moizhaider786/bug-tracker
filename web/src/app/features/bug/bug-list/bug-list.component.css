@@ -1,0 +1,76 @@
+.bug-list-container {
+  margin-top: 0.5rem;
+}
+
+.bugs-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.bug-card {
+  border: 1px solid #ccc;
+  padding: 0.75rem;
+}
+
+.bug-header {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.bug-type-badge,
+.bug-status-badge {
+  font-size: 0.75em;
+  padding: 2px 6px;
+  background: #eee;
+}
+
+.status-new { background: #d0e8ff; }
+.status-started { background: #fff3cd; }
+.status-completed { background: #d4edda; }
+.status-resolved { background: #c3e6cb; }
+
+.bug-title {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+}
+
+.bug-description {
+  margin: 0 0 0.5rem;
+  color: #555;
+}
+
+.bug-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bug-deadline {
+  font-size: 0.85em;
+  color: #666;
+}
+
+.bug-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-edit {
+  padding: 3px 10px;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid #ccc;
+}
+
+.btn-delete {
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+.empty-state {
+  color: #888;
+}

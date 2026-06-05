@@ -71,15 +71,16 @@ export class BugService {
 
   async getBugs(userId: number, role: UserRoles, projectId?: number) {
     if (role === UserRoles.MANAGER) {
-      return await this.projectsRepo.find({
+      const projects = await this.projectsRepo.find({
         where: {
           createdBy: userId,
           ...(projectId && { id: projectId }),
         },
-        relations: {
-          bugs: true,
-        },
+        relations: { bugs: true },
+        select: { bugs: true },
       });
+
+      return projects.flatMap((project) => project.bugs);
     } else if (role === UserRoles.QA) {
       return await this.bugsRepo.find({
         where: {

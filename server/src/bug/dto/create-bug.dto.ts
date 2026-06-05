@@ -5,7 +5,6 @@ export class CreateBugDto {
   type!: BugType;
   status!: BugStatus;
   deadline?: Date;
-  timelineSeconds: number = 0;
   projectId!: number;
   developerId!: number;
   createdBy!: number;

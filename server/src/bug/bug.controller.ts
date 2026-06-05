@@ -71,7 +71,7 @@ export class BugController {
     return await this.bugService.deleteBug(id, req.user!.id, req.user!.role);
   }
 
-  @Post(':/id/screenshot')
+  @Post('/:id/screenshot')
   @UseInterceptors(FileInterceptor('file'))
   async uploadScreenshot(
     @UploadedFile(
@@ -98,7 +98,7 @@ export class BugController {
       data: { publicUrl },
     } = this.supabaseService
       .getClient()
-      .storage.from('screenshots')
+      .storage.from('bug-tracker-bucket')
       .getPublicUrl(data.path);
 
     return { url: publicUrl };

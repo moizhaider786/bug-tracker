@@ -5,15 +5,11 @@ import { ProjectsPageComponent } from './features/project/projects-page/projects
 import { AuthGuard } from './features/auth/auth.guard';
 import { ProjectMemberPageComponent } from './features/project/project-member-page/project-member-page.component';
 import { ProjectDetailPageComponent } from './features/project/project-detail-page/project-detail-page.component';
+import { BugFormPageComponent } from './features/bug/bug-form-page/bug-form-page.component';
+
 export const routes: Routes = [
-  {
-    path: 'signup',
-    component: AuthPageComponent,
-  },
-  {
-    path: 'login',
-    component: AuthPageComponent,
-  },
+  { path: 'signup', component: AuthPageComponent },
+  { path: 'login', component: AuthPageComponent },
   {
     path: 'dashboard',
     component: DashboardPageComponent,
@@ -34,6 +30,18 @@ export const routes: Routes = [
     component: ProjectMemberPageComponent,
     canActivate: [AuthGuard],
   },
+  // Bug routes — must come BEFORE projects/:id
+  {
+    path: 'projects/:projectId/bugs/new',
+    component: BugFormPageComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'projects/:projectId/bugs/:bugId/edit',
+    component: BugFormPageComponent,
+    canActivate: [AuthGuard],
+  },
+  // Project detail — catch-all last
   {
     path: 'projects/:id',
     component: ProjectDetailPageComponent,

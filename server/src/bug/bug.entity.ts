@@ -36,7 +36,7 @@ export class Bugs {
   @Column({ type: 'timestamp', nullable: true })
   deadline!: Date;
 
-  @Column()
+  @Column({default:0})
   timelineSeconds!: number;
 
   @Column({ type: 'varchar', length: 255, nullable: true })

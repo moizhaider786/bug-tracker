@@ -9,8 +9,8 @@ export class SupabaseService {
 
   constructor(private configService: ConfigService) {
     this.client = createClient(
-      this.configService.get<string>('SUPABASE_URL'),
-      this.configService.get<string>('SUPABASE_KEY'),
+      this.configService.get<string>('SUPABASE_URL')!,
+      this.configService.get<string>('SUPABASE_KEY')!,
     );
   }
 

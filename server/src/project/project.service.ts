@@ -48,8 +48,10 @@ export class ProjectService {
         where: { userId: userId },
         relations: { project: true },
       });
+      console.log('User id ', userId);
+      console.log('user projects ', JSON.stringify(userProjects, null, 2));
       projects = userProjects.map((up) => ({
-        assignedAth: up.assignedAt,
+        assignedAt: up.assignedAt,
         ...up.project,
       }));
     }
@@ -72,9 +74,12 @@ export class ProjectService {
         );
       if (members.some((userId) => userId === reqUserId))
         throw new BadRequestException('Manager can not be a project member');
-      const filteredMembers = members.filter((userId) =>
-        project.projectUsers.some((pu) => pu.userId === userId),
+      const filteredMembers = members.filter(
+        (userId) => !project.projectUsers.some((pu) => pu.userId === userId),
       );
+      console.log('members ', members);
+      console.log('filtered members ', filteredMembers);
+      console.log('project users ', project.projectUsers);
       await this.projectsToUsersRepo.save(
         filteredMembers.map((userId) => ({
           projectId: projectId,

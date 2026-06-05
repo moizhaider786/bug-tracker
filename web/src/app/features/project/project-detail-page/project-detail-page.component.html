@@ -1,21 +1,42 @@
-<div>
-  <div>
-    <p>{{ project()?.createdAt }}</p>
-    <p>{{ project()?.name }}</p>
+<div class="project-detail">
+
+  <!-- Project Info -->
+  <div class="project-info">
+    <p class="created-at">{{ project()?.createdAt | date: 'mediumDate' }}</p>
+    <h2>{{ project()?.name }}</h2>
     <p>{{ project()?.description }}</p>
   </div>
-  <div>
-    Members:
-    <ul>
-      @for (member of projectMembers(); track $index) {
-        <li>
-          <div>
-            <p>{{ member.name }}</p>
-            <p>{{ member.email }}</p>
-            <p>{{ member.role }}</p>
-          </div>
+
+  <!-- Members -->
+  <div class="members-section">
+    <h3>Members</h3>
+    <ul class="member-list">
+      @for (member of projectMembers(); track member.id) {
+        <li class="member-item">
+          <span>{{ member.name }}</span>
+          <span class="role-badge">{{ member.role }}</span>
         </li>
+      } @empty {
+        <li><p class="empty-state">No members assigned.</p></li>
       }
     </ul>
   </div>
+
+  <!-- Bugs Section -->
+  <div class="bugs-section">
+    <div class="bugs-header">
+      <h3>Bugs</h3>
+      @if (isQA) {
+        <a
+          class="btn-create-bug"
+          [routerLink]="['/projects', projectId(), 'bugs', 'new']"
+        >+ Report Bug</a>
+      }
+    </div>
+
+    @if (projectId()) {
+      <app-bug-list [projectId]="projectId()"></app-bug-list>
+    }
+  </div>
+
 </div>

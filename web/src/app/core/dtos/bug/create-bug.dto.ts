@@ -5,7 +5,6 @@ export interface CreateBugDto {
     status: BugStatus,
     type: BugType,
     deadline?: Date,
-    timelineSeconds: number,
     projectId: number,
     developerId: number,
     createdBy: number,

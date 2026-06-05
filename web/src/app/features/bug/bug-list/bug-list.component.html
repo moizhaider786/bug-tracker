@@ -1,1 +1,34 @@
-<p>bug-list works!</p>
+<div class="bug-list-container">
+  <div class="bugs-wrapper">
+    @for (bug of bugs(); track bug.id) {
+      <div class="bug-card">
+        <div class="bug-header">
+          <span class="bug-type-badge">{{ bug.type }}</span>
+          <span class="bug-status-badge status-{{ bug.status.toLowerCase() }}">
+            {{ bug.status }}
+          </span>
+        </div>
+        <h4 class="bug-title">{{ bug.title }}</h4>
+        <p class="bug-description">{{ bug.description }}</p>
+        <div class="bug-footer">
+          <span class="bug-deadline">
+            {{ bug.deadline ? (bug.deadline | date: 'mediumDate') : 'No deadline' }}
+          </span>
+          @if (isQA) {
+            <div class="bug-actions">
+              <a
+                class="btn-edit"
+                [routerLink]="['/projects', projectId(), 'bugs', bug.id, 'edit']"
+              >Edit</a>
+              <button class="btn-delete" type="button" (click)="deleteBug(bug.id)">
+                Delete
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    } @empty {
+      <p class="empty-state">No bugs reported for this project yet.</p>
+    }
+  </div>
+</div>
