@@ -1,18 +1,5 @@
-import {
-  Component,
-  inject,
-  input,
-  OnInit,
-  OnChanges,
-  SimpleChanges,
-  signal,
-} from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { Component, inject, input, OnInit, OnChanges, SimpleChanges, signal } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { BugService } from '../../../core/services/bug.service';
@@ -43,6 +30,7 @@ export class BugFormComponent implements OnInit, OnChanges {
   selectedFile = signal<File | null>(null);
   createdBugId = signal<number | null>(null);
   isSubmitting = signal(false);
+  fileError = signal<string | null>(null);
 
   bugStatusOptions = Object.values(BugStatus);
   bugTypeOptions = Object.values(BugType);
@@ -62,7 +50,7 @@ export class BugFormComponent implements OnInit, OnChanges {
       // Developer can only update status + timeline
       this.form = this.fb.group({
         status: [BugStatus.NEW, Validators.required],
-        timeline: ['00:00'],   // HH:MM — converted to/from seconds
+        timeline: ['00:00'], // HH:MM — converted to/from seconds
       });
     } else {
       // QA: create or edit a bug (no timeline)
@@ -80,8 +68,7 @@ export class BugFormComponent implements OnInit, OnChanges {
       // Only QA needs the developer list
       this.userService.getAllUsers([UserRoles.DEVELOPER]).subscribe({
         next: (users) => this.developers.set(users),
-        error: (err) =>
-          alert('Failed to load developers: ' + (err.error?.message || err.message)),
+        error: (err) => alert('Failed to load developers: ' + (err.error?.message || err.message)),
       });
     }
   }
@@ -91,28 +78,23 @@ export class BugFormComponent implements OnInit, OnChanges {
       this.bugService.getBugById(this.bugId()!).subscribe({
         next: (bug) => {
           if (this.isDeveloper) {
-            console.log("ran")
             this.form.patchValue({
               status: bug.status,
               timeline: this.secondsToTimeString(bug.timelineSeconds),
             });
           } else {
-            console.log("rant2")
             this.form.patchValue({
               title: bug.title,
               description: bug.description,
               status: bug.status,
               type: bug.type,
-              deadline: bug.deadline
-                ? new Date(bug.deadline).toISOString().split('T')[0]
-                : null,
+              deadline: bug.deadline ? new Date(bug.deadline).toISOString().split('T')[0] : null,
               developerId: bug.developerId,
             });
           }
           this.createdBugId.set(bug.id);
         },
-        error: (err) =>
-          alert('Failed to load bug: ' + (err.error?.message || err.message)),
+        error: (err) => alert('Failed to load bug: ' + (err.error?.message || err.message)),
       });
     }
 
@@ -124,6 +106,18 @@ export class BugFormComponent implements OnInit, OnChanges {
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
+      const file = input.files?.[0];
+      if (!file) return;
+
+      const allowed = ['image/png', 'image/gif'];
+
+      if (!allowed.includes(file.type)) {
+        input.value = ''; // reset the input
+        this.selectedFile.set(null);
+        this.fileError.set('Only PNG and GIF files are allowed.');
+        return;
+      }
+      this.fileError.set(null);
       this.selectedFile.set(input.files[0]);
     }
   }
@@ -151,7 +145,6 @@ export class BugFormComponent implements OnInit, OnChanges {
       return;
     }
 
-    // QA: create or update (no timeline — default 0)
     const data = { ...this.form.value, timelineSeconds: 0 };
 
     if (this.isEditMode() && this.bugId()) {
@@ -182,10 +175,7 @@ export class BugFormComponent implements OnInit, OnChanges {
         next: () => this.navigateBack(),
         error: (err) => {
           this.isSubmitting.set(false);
-          alert(
-            'Bug saved but screenshot upload failed: ' +
-              (err.error?.message || err.message),
-          );
+          alert('Bug saved but screenshot upload failed: ' + (err.error?.message || err.message));
           this.navigateBack();
         },
       });
@@ -194,16 +184,12 @@ export class BugFormComponent implements OnInit, OnChanges {
     }
   }
 
-  // ── Time ↔ Seconds helpers ──────────────────────────────────────────────
-
-  /** Converts seconds into "HH:MM" for <input type="time"> */
   private secondsToTimeString(seconds: number): string {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   }
 
-  /** Converts "HH:MM" from <input type="time"> into total seconds */
   private timeStringToSeconds(time: string): number {
     if (!time) return 0;
     const [hours, minutes] = time.split(':').map(Number);

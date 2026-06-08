@@ -4,6 +4,7 @@ export class CreateBugDto {
   description!: string;
   type!: BugType;
   status!: BugStatus;
+  screenShotUrl?: string;
   deadline?: Date;
   projectId!: number;
   developerId!: number;

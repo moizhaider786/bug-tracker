@@ -16,16 +16,19 @@
           </span>
           @if (isQA) {
             <div class="bug-actions">
-              <a
-                class="btn-edit"
-                [routerLink]="['/projects', projectId(), 'bugs', bug.id, 'edit']"
-              >Edit</a>
-              <button class="btn-delete" type="button" (click)="deleteBug(bug.id)">
-                Delete
-              </button>
+              <a class="btn-edit" [routerLink]="['/projects', projectId(), 'bugs', bug.id, 'edit']"
+                >Edit</a
+              >
+              <button class="btn-delete" type="button" (click)="deleteBug(bug.id)">Delete</button>
             </div>
           }
         </div>
+        @if (bug.screenShotUrl) {
+          <span>
+            <P>ScreenShot</P>
+            <img class="bug-screenshot" [src]="bug.screenShotUrl" alt="screenshot" />
+          </span>
+        }
       </div>
     } @empty {
       <p class="empty-state">No bugs reported for this project yet.</p>

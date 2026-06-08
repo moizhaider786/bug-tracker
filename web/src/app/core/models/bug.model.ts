@@ -7,7 +7,7 @@ export interface Bug {
     type: BugType,
     deadline?: Date,
     timelineSeconds: number,
-    screeShotUrl?: string,
+    screenShotUrl?: string,
     projectId: number,
     developerId: number,
     createdBy: number,

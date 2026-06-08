@@ -1,8 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="bug-form">
-
   <!-- ── DEVELOPER VIEW: status + timeline only ──────────────────────── -->
   @if (isDeveloper) {
-
     <div class="form-group">
       <label for="status">Status *</label>
       <select id="status" formControlName="status">
@@ -14,18 +12,11 @@
 
     <div class="form-group">
       <label for="timeline">Time Spent (hh:mm)</label>
-      <input
-        id="timeline"
-        type="time"
-        formControlName="timeline"
-        step="60"
-      />
+      <input id="timeline" type="time" formControlName="timeline" step="60" />
       <p class="field-hint">Enter how long it took to complete this bug / feature.</p>
     </div>
-
   } @else {
-
-  <!-- ── QA VIEW: all fields except timeline ─────────────────────────── -->
+    <!-- ── QA VIEW: all fields except timeline ─────────────────────────── -->
 
     <div class="form-group">
       <label for="title">Title *</label>
@@ -81,7 +72,6 @@
       }
     </div>
 
-    <!-- Screenshot — appears after bug is first created -->
     @if (isEditMode() || createdBugId()) {
       <div class="form-group screenshot-group">
         <label for="screenshot">Screenshot (PNG / GIF)</label>
@@ -94,17 +84,18 @@
         @if (selectedFile()) {
           <p class="file-hint">Selected: {{ selectedFile()!.name }}</p>
         }
+        @if (fileError()) {
+          <p class="error">{{ fileError() }}</p>
+        }
       </div>
     }
-
   }
 
   <!-- ── Shared actions ───────────────────────────────────────────────── -->
   <div class="form-actions">
     <button type="button" class="btn-cancel" (click)="navigateBack()">Cancel</button>
     <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
-      {{ isSubmitting() ? 'Saving...' : (isEditMode() ? 'Update Bug' : 'Create Bug') }}
+      {{ isSubmitting() ? 'Saving...' : isEditMode() ? 'Update Bug' : 'Create Bug' }}
     </button>
   </div>
-
 </form>
