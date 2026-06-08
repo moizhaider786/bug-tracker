@@ -29,9 +29,16 @@ export class AuthService {
         }),
       );
   }
+  refreshToken() {
+    return this.httpClient
+      .post<{ access_token: string }>(`${this.apiUrl}/refresh`, {}, { withCredentials: true })
+      .pipe(tap((res) => localStorage.setItem('access_token', res.access_token)));
+  }
+
   logout() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('user');
+    return this.httpClient.post(`${this.apiUrl}/logout`, {}, { withCredentials: true });
   }
   getProfile(): Observable<User> {
     return this.httpClient.get<User>(`${this.apiUrl}/me`);

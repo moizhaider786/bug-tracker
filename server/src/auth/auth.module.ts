@@ -9,15 +9,12 @@ import { Users } from 'src/user/user.entity';
 import { AuthService } from './auth.service';
 import { UserService } from 'src/user/user.service';
 import { AuthController } from './auth.controller';
-import { jwtConstants } from 'src/lib/constants';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Users]),
     JwtModule.register({
       global: true,
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '1d' },
     }),
   ],
   providers: [

@@ -3,10 +3,11 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
-import { PASSWORD_SALT } from 'src/lib/constants';
+import { jwtConstants, PASSWORD_SALT } from 'src/lib/constants';
 import { UserService } from 'src/user/user.service';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
+import { JwtPayload, UserRoles } from 'src/types';
 
 @Injectable()
 export class AuthService {
@@ -40,11 +41,23 @@ export class AuthService {
       name: user.name,
       role: user.role,
       createdAt: user.createdAt,
-      access_token: await this.jwtService.signAsync({
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      }),
     };
+  }
+
+  async generateTokens(userId: number, role: UserRoles) {
+    const payload: JwtPayload = { id: userId, role };
+
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload, {
+        secret: jwtConstants.secret,
+        expiresIn: '60m',
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: jwtConstants.refreshSecret,
+        expiresIn: '7d',
+      }),
+    ]);
+
+    return { accessToken, refreshToken };
   }
 }

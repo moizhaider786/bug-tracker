@@ -6,7 +6,6 @@ export enum UserRoles {
 
 export type JwtPayload = {
     id: number,
-    email: string,
     role: UserRoles
 }
 
