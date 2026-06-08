@@ -14,12 +14,14 @@
           <span class="bug-deadline">
             {{ bug.deadline ? (bug.deadline | date: 'mediumDate') : 'No deadline' }}
           </span>
-          @if (isQA) {
+          @if (isQA || isDev) {
             <div class="bug-actions">
               <a class="btn-edit" [routerLink]="['/projects', projectId(), 'bugs', bug.id, 'edit']"
                 >Edit</a
               >
-              <button class="btn-delete" type="button" (click)="deleteBug(bug.id)">Delete</button>
+              @if (isQA) {
+                <button class="btn-delete" type="button" (click)="deleteBug(bug.id)">Delete</button>
+              }
             </div>
           }
         </div>

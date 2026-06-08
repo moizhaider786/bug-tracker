@@ -1,101 +1,119 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="bug-form">
-  <!-- ── DEVELOPER VIEW: status + timeline only ──────────────────────── -->
-  @if (isDeveloper) {
-    <div class="form-group">
-      <label for="status">Status *</label>
-      <select id="status" formControlName="status">
-        @for (s of bugStatusOptions; track s) {
-          <option [value]="s">{{ s }}</option>
-        }
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="timeline">Time Spent (hh:mm)</label>
-      <input id="timeline" type="time" formControlName="timeline" step="60" />
-      <p class="field-hint">Enter how long it took to complete this bug / feature.</p>
-    </div>
-  } @else {
-    <!-- ── QA VIEW: all fields except timeline ─────────────────────────── -->
-
-    <div class="form-group">
-      <label for="title">Title *</label>
-      <input id="title" type="text" formControlName="title" />
-      @if (form.get('title')?.invalid && form.get('title')?.touched) {
-        <div class="error">Title is required (max 280 chars).</div>
-      }
-    </div>
-
-    <div class="form-group">
-      <label for="description">Description *</label>
-      <textarea id="description" formControlName="description" rows="4"></textarea>
-      @if (form.get('description')?.invalid && form.get('description')?.touched) {
-        <div class="error">Description is required.</div>
-      }
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label for="type">Type *</label>
-        <select id="type" formControlName="type">
-          @for (t of bugTypeOptions; track t) {
-            <option [value]="t">{{ t }}</option>
-          }
-        </select>
-      </div>
-
+@if (isDeveloper || isQA) {
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="bug-form">
+    @if (isDeveloper) {
       <div class="form-group">
         <label for="status">Status *</label>
         <select id="status" formControlName="status">
-          @for (s of bugStatusOptions; track s) {
+          @for (s of bugStatusOptions(); track s) {
             <option [value]="s">{{ s }}</option>
           }
         </select>
       </div>
-    </div>
 
-    <div class="form-group">
-      <label for="deadline">Deadline</label>
-      <input id="deadline" type="date" formControlName="deadline" />
-    </div>
-
-    <div class="form-group">
-      <label for="developerId">Assign Developer *</label>
-      <select id="developerId" formControlName="developerId">
-        <option [ngValue]="null" disabled>Select a developer</option>
-        @for (dev of developers(); track dev.id) {
-          <option [value]="dev.id">{{ dev.name }} ({{ dev.email }})</option>
+      <div class="form-group">
+        <p>Time Spent</p>
+        <input id="hours" type="number" formControlName="hours" />
+        @if (form.get('hours')?.errors?.['min'] && form.get('hours')?.touched) {
+          <div class="error">Hours cannot be negative.</div>
         }
-      </select>
-      @if (form.get('developerId')?.invalid && form.get('developerId')?.touched) {
-        <div class="error">Please assign a developer.</div>
-      }
-    </div>
-
-    @if (isEditMode() || createdBugId()) {
-      <div class="form-group screenshot-group">
-        <label for="screenshot">Screenshot (PNG / GIF)</label>
-        <input
-          id="screenshot"
-          type="file"
-          accept="image/png, image/gif"
-          (change)="onFileChange($event)"
-        />
-        @if (selectedFile()) {
-          <p class="file-hint">Selected: {{ selectedFile()!.name }}</p>
+        <label for="minutes">Minutes</label>
+        <input id="minutes" type="number" formControlName="minutes" />
+        @if (form.get('minutes')?.errors?.['min'] && form.get('minutes')?.touched) {
+          <div class="error">Minutes cannot be negative.</div>
         }
-        @if (fileError()) {
-          <p class="error">{{ fileError() }}</p>
+        <p class="field-hint">Enter how long it took to complete this bug / feature.</p>
+      </div>
+    } @else {
+      <div class="form-group">
+        <label for="title">Title *</label>
+        <input id="title" type="text" formControlName="title" />
+        @if (form.get('title')?.invalid && form.get('title')?.touched) {
+          <div class="error">Title is required (max 280 chars).</div>
         }
       </div>
-    }
-  }
 
-  <!-- ── Shared actions ───────────────────────────────────────────────── -->
-  <div class="form-actions">
-    <button type="button" class="btn-cancel" (click)="navigateBack()">Cancel</button>
-    <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
-      {{ isSubmitting() ? 'Saving...' : isEditMode() ? 'Update Bug' : 'Create Bug' }}
-    </button>
-  </div>
-</form>
+      <div class="form-group">
+        <label for="description">Description *</label>
+        <textarea id="description" formControlName="description" rows="4"></textarea>
+        @if (form.get('description')?.invalid && form.get('description')?.touched) {
+          <div class="error">Description is required.</div>
+        }
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="type">Type *</label>
+          <select id="type" formControlName="type">
+            @for (t of bugTypeOptions; track t) {
+              <option [value]="t">{{ t }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Status *</label>
+          <select id="status" formControlName="status">
+            @for (s of bugStatusOptions(); track s) {
+              <option [value]="s">{{ s }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="deadline">Deadline</label>
+        <input id="deadline" type="date" formControlName="deadline" />
+      </div>
+
+      <div class="form-group">
+        <label for="developerId">Assign Developer *</label>
+        <select id="developerId" formControlName="developerId">
+          <option [ngValue]="null" disabled>Select a developer</option>
+          @for (dev of developers(); track dev.id) {
+            <option [value]="dev.id">{{ dev.name }} ({{ dev.email }})</option>
+          }
+        </select>
+        @if (form.get('developerId')?.invalid && form.get('developerId')?.touched) {
+          <div class="error">Please assign a developer.</div>
+        }
+      </div>
+
+      @if (isEditMode() || createdBugId()) {
+        <div class="form-group screenshot-group">
+          <label for="screenshot">Screenshot (PNG / GIF)</label>
+          <input
+            id="screenshot"
+            type="file"
+            accept="image/png, image/gif"
+            (change)="onFileChange($event)"
+          />
+          @if (selectedFile()) {
+            <p class="file-hint">Selected: {{ selectedFile()!.name }}</p>
+          }
+          @if (fileError()) {
+            <p class="error">{{ fileError() }}</p>
+          }
+        </div>
+      }
+    }
+
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" (click)="navigateBack()">Cancel</button>
+      @if (isEditMode()) {
+        <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Saving...' : 'Update Bug' }}
+        </button>
+      } @else if (!createdBugId()) {
+        <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Saving...' : 'Create Bug' }}
+        </button>
+      } @else {
+        <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Uploading...' : 'Upload Screenshot' }}
+        </button>
+      }
+    </div>
+  </form>
+} @else {
+  <p>Unauthorized to access this page</p>
+}

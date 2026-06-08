@@ -1,4 +1,13 @@
-import { Component, inject, input, OnInit, OnChanges, SimpleChanges, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  input,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  signal,
+  computed,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -7,6 +16,8 @@ import { UserService } from '../../../core/services/user.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../core/models/user.model';
 import { BugStatus, BugType, UserRoles } from '../../../types/types';
+import { toTimelineSeconds, fromTimelineSeconds } from '../../../lib/utility';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-bug-form',
@@ -32,7 +43,17 @@ export class BugFormComponent implements OnInit, OnChanges {
   isSubmitting = signal(false);
   fileError = signal<string | null>(null);
 
-  bugStatusOptions = Object.values(BugStatus);
+  formType = signal<BugType>(BugType.BUG);
+
+  bugStatusOptions = computed(() => {
+    const all = Object.values(BugStatus);
+    if (this.formType() === BugType.BUG)
+      return all.filter((status) => status !== BugStatus.COMPLETED);
+    if (this.formType() === BugType.FEATURE)
+      return all.filter((status) => status !== BugStatus.RESOLVED);
+    return all;
+  });
+
   bugTypeOptions = Object.values(BugType);
 
   // Role flags — set once in ngOnInit
@@ -47,13 +68,12 @@ export class BugFormComponent implements OnInit, OnChanges {
     this.isQA = currentUser.role === UserRoles.QA;
 
     if (this.isDeveloper) {
-      // Developer can only update status + timeline
       this.form = this.fb.group({
         status: [BugStatus.NEW, Validators.required],
-        timeline: ['00:00'], // HH:MM — converted to/from seconds
+        hours: [null, Validators.min(0)],
+        minutes: [null, Validators.min(0)],
       });
     } else {
-      // QA: create or edit a bug (no timeline)
       this.form = this.fb.group({
         title: ['', [Validators.required, Validators.maxLength(280)]],
         description: ['', Validators.required],
@@ -65,11 +85,12 @@ export class BugFormComponent implements OnInit, OnChanges {
         createdBy: [currentUser.id],
       });
 
-      // Only QA needs the developer list
       this.userService.getAllUsers([UserRoles.DEVELOPER]).subscribe({
         next: (users) => this.developers.set(users),
         error: (err) => alert('Failed to load developers: ' + (err.error?.message || err.message)),
       });
+
+      this.form.get('type')!.valueChanges.subscribe((val) => this.formType.set(val));
     }
   }
 
@@ -78,9 +99,12 @@ export class BugFormComponent implements OnInit, OnChanges {
       this.bugService.getBugById(this.bugId()!).subscribe({
         next: (bug) => {
           if (this.isDeveloper) {
+            const { hours, minutes } = fromTimelineSeconds(bug.timelineSeconds);
             this.form.patchValue({
               status: bug.status,
-              timeline: this.secondsToTimeString(bug.timelineSeconds),
+              type: bug.type,
+              hours,
+              minutes,
             });
           } else {
             this.form.patchValue({
@@ -128,18 +152,19 @@ export class BugFormComponent implements OnInit, OnChanges {
       return;
     }
     this.isSubmitting.set(true);
-
     if (this.isDeveloper && this.bugId()) {
-      // Developer: send only status + timelineSeconds
       const payload = {
         status: this.form.value.status,
-        timelineSeconds: this.timeStringToSeconds(this.form.value.timeline),
+        timelineSeconds: toTimelineSeconds(this.form.value.hours, this.form.value.minutes),
       };
       this.bugService.updateBug(this.bugId()!, payload).subscribe({
-        next: () => this.navigateBack(),
+        next: () => {
+          alert('Bug updated Successfully');
+          this.navigateBack();
+        },
         error: (err) => {
           this.isSubmitting.set(false);
-          alert('Failed to update bug: ' + (err.error?.message || err.message));
+          alert(err.error?.message || err.message || 'Failed to update bug: ');
         },
       });
       return;
@@ -147,19 +172,36 @@ export class BugFormComponent implements OnInit, OnChanges {
 
     const data = { ...this.form.value, timelineSeconds: 0 };
 
+    if (this.createdBugId() && !this.isEditMode()) {
+      this.isSubmitting.set(true);
+      this.uploadScreenshotIfSelected(this.createdBugId()!);
+      return;
+    }
+
     if (this.isEditMode() && this.bugId()) {
-      this.bugService.updateBug(this.bugId()!, data).subscribe({
-        next: (bug) => this.uploadScreenshotIfSelected(bug.id),
-        error: (err) => {
-          this.isSubmitting.set(false);
-          alert('Failed to update bug: ' + (err.error?.message || err.message));
-        },
-      });
+      this.bugService
+        .updateBug(this.bugId()!, data)
+        .pipe(
+          finalize(() => {
+            alert('bug updated successfully');
+            this.navigateBack();
+          }),
+        )
+        .subscribe({
+          next: (bug) => {
+            this.uploadScreenshotIfSelected(bug.id);
+          },
+          error: (err) => {
+            this.isSubmitting.set(false);
+            alert('Failed to update bug: ' + (err.error?.message || err.message));
+          },
+        });
     } else {
       this.bugService.createBug(data).subscribe({
         next: (bug) => {
           this.createdBugId.set(bug.id);
-          this.uploadScreenshotIfSelected(bug.id);
+          this.isSubmitting.set(false);
+          alert('Bug created successfully! You can now upload a screenshot.');
         },
         error: (err) => {
           this.isSubmitting.set(false);
@@ -172,28 +214,19 @@ export class BugFormComponent implements OnInit, OnChanges {
   private uploadScreenshotIfSelected(bugId: number): void {
     if (this.selectedFile()) {
       this.bugService.uploadScreenshot(bugId, this.selectedFile()!).subscribe({
-        next: () => this.navigateBack(),
+        next: () => {
+          if (!this.isEditMode()) {
+            alert('Screenshot added successfully');
+          }
+          this.navigateBack();
+        },
         error: (err) => {
           this.isSubmitting.set(false);
           alert('Bug saved but screenshot upload failed: ' + (err.error?.message || err.message));
           this.navigateBack();
         },
       });
-    } else {
-      this.navigateBack();
     }
-  }
-
-  private secondsToTimeString(seconds: number): string {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-  }
-
-  private timeStringToSeconds(time: string): number {
-    if (!time) return 0;
-    const [hours, minutes] = time.split(':').map(Number);
-    return hours * 3600 + minutes * 60;
   }
 
   navigateBack(): void {

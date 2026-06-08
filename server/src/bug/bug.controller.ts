@@ -22,6 +22,7 @@ import { CreateBugDto } from './dto/create-bug.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { SupabaseService } from 'src/supabase/supabase.service';
 import 'multer';
+import { UpdateBugDto } from './dto/update-bug.dto';
 
 @Controller('bug')
 export class BugController {
@@ -56,7 +57,7 @@ export class BugController {
   async update(
     @Req() req: Request,
     @Param('id') id: number,
-    @Body() data: Partial<CreateBugDto>,
+    @Body() data: UpdateBugDto,
   ) {
     return await this.bugService.updateBug(
       id,

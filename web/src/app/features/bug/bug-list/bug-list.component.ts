@@ -28,6 +28,8 @@ export class BugListComponent implements OnChanges {
 
   bugs = signal<Bug[]>([]);
   isQA = this.authService.hasRole(UserRoles.QA);
+  isDev = this.authService.hasRole(UserRoles.DEVELOPER);
+
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['projectId'] && this.projectId()) {

@@ -1,15 +1,18 @@
 import {
+  BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { CreateBugDto } from './dto/create-bug.dto';
 import { Bugs } from './bug.entity';
-import { UserRoles } from 'src/types';
+import { BugStatus, BugType, UserRoles } from 'src/types';
 import { Projects } from 'src/project/project.entity';
 import { ProjectsToUsers } from 'src/project/project-to-user.entity';
+import { UpdateBugDto } from './dto/update-bug.dto';
 
 @Injectable()
 export class BugService {
@@ -22,50 +25,78 @@ export class BugService {
   ) {}
 
   async createBug(data: CreateBugDto) {
-    const isProjectQa = !!(await this.projectsToUsersRepo.findOne({
-      where: { projectId: data.projectId, userId: data.createdBy },
-    }));
-    if (!isProjectQa) {
-      throw new UnauthorizedException('You are not assigned to this project');
+    try {
+      const isProjectQa = !!(await this.projectsToUsersRepo.findOne({
+        where: { projectId: data.projectId, userId: data.createdBy },
+      }));
+      if (!isProjectQa) {
+        throw new UnauthorizedException('You are not assigned to this project');
+      }
+      const isProjectDev = !!(await this.projectsToUsersRepo.findOne({
+        where: { projectId: data.projectId, userId: data.developerId },
+      }));
+      if (!isProjectDev) {
+        throw new UnauthorizedException(
+          'The assigned developer is not part of this project',
+        );
+      }
+      const bug = this.bugsRepo.create(data);
+      return await this.bugsRepo.save(bug);
+    } catch (error: any) {
+      if (error instanceof QueryFailedError) {
+        const code = (error.driverError as { code?: string }).code;
+        if (code === 'ER_DUP_ENTRY') {
+          throw new ConflictException('Bug title already exists');
+        }
+      }
+      throw error;
     }
-    const isProjectDev = !!(await this.projectsToUsersRepo.findOne({
-      where: { projectId: data.projectId, userId: data.developerId },
-    }));
-    if (!isProjectDev) {
-      throw new UnauthorizedException(
-        'The assigned developer is not part of this project',
-      );
-    }
-    const bug = this.bugsRepo.create(data);
-    return await this.bugsRepo.save(bug);
   }
 
   async updateBug(
     id: number,
     reqUserId: number,
     role: UserRoles,
-    data: Partial<CreateBugDto>,
+    data: UpdateBugDto,
   ) {
-    if (role === UserRoles.DEVELOPER) {
-      const bug = await this.bugsRepo.findOne({
-        where: { id, developerId: reqUserId },
-      });
-      if (!bug) {
-        throw new UnauthorizedException('You are not assigned to this bug');
+    try {
+      if (role === UserRoles.DEVELOPER) {
+        const bug = await this.bugsRepo.findOne({
+          where: { id, developerId: reqUserId },
+        });
+        if (!bug) {
+          throw new UnauthorizedException('You are not assigned to this bug');
+        }
+        if (bug.type === BugType.BUG && bug.status === BugStatus.COMPLETED)
+          throw new BadRequestException('Invalid bug status against bug type.');
+        else if (
+          bug.type === BugType.FEATURE &&
+          bug.status === BugStatus.RESOLVED
+        )
+          throw new BadRequestException('Invalid bug status against bug type.');
+        bug.status = data.status ?? bug.status;
+        bug.timelineSeconds = data.timelineSeconds ?? bug.timelineSeconds;
+        return await this.bugsRepo.save(bug);
+      } else if (role === UserRoles.QA) {
+        const bug = await this.bugsRepo.findOne({
+          where: { id, createdBy: reqUserId },
+        });
+        if (!bug) {
+          throw new UnauthorizedException('You did not create this bug');
+        }
+        Object.assign(bug, data);
+        return await this.bugsRepo.save(bug);
+      } else if (role === UserRoles.MANAGER) {
+        throw new UnauthorizedException('Managers cannot update bugs');
       }
-      bug.status = data.status ?? bug.status;
-      return await this.bugsRepo.save(bug);
-    } else if (role === UserRoles.QA) {
-      const bug = await this.bugsRepo.findOne({
-        where: { id, createdBy: reqUserId },
-      });
-      if (!bug) {
-        throw new UnauthorizedException('You did not create this bug');
+    } catch (error: any) {
+      if (error instanceof QueryFailedError) {
+        const code = (error.driverError as { code?: string }).code;
+        if (code === 'ER_DUP_ENTRY') {
+          throw new ConflictException('Bug title already exists');
+        }
       }
-      Object.assign(bug, data);
-      return await this.bugsRepo.save(bug);
-    } else if (role === UserRoles.MANAGER) {
-      throw new UnauthorizedException('Managers cannot update bugs');
+      throw error;
     }
   }
 
