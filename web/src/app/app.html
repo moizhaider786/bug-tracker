@@ -2,7 +2,10 @@
   @if (authService.isAuthenticated()) {
     <app-sidebar></app-sidebar>
   }
-  <main class="main-content" [class.with-sidebar]="authService.isAuthenticated()">
+  <main
+    class="main-content"
+    [class.with-sidebar]="authService.isAuthenticated() && sidebarService.get()"
+  >
     <router-outlet />
   </main>
 </div>

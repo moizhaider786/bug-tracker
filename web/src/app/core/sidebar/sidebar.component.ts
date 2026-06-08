@@ -1,36 +1,42 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { OnInit } from '@angular/core';
+import { NonSidebarRoutes } from '../../lib/constants';
+import { SidebarService } from '../services/sidebar.service';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
   imports: [RouterLink, RouterLinkActive],
   template: `
-    <div class="sidebar">
-      <div class="sidebar-header">
-        <h2>Bug Tracker</h2>
-      </div>
-      <nav class="sidebar-nav">
-        <ul>
-          <li>
-            <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-          </li>
-          <li>
-            <a routerLink="/projects" routerLinkActive="active">Projects</a>
-          </li>
-          @if (authService.hasRole('admin')) {
+    @if (sidebarService.get()) {
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <h2>Bug Tracker</h2>
+        </div>
+        <nav class="sidebar-nav">
+          <ul>
             <li>
-              <a routerLink="/users" routerLinkActive="active">Manage Users</a>
+              <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
             </li>
-          }
-        </ul>
-      </nav>
-      <div class="sidebar-footer">
-        <button (click)="logout()" class="logout-btn">Logout</button>
+            <li>
+              <a routerLink="/projects" routerLinkActive="active">Projects</a>
+            </li>
+            @if (authService.hasRole('admin')) {
+              <li>
+                <a routerLink="/users" routerLinkActive="active">Manage Users</a>
+              </li>
+            }
+          </ul>
+        </nav>
+        <div class="sidebar-footer">
+          <button (click)="logout()" class="logout-btn">Logout</button>
+        </div>
       </div>
-    </div>
+    }
   `,
   styles: [
     `
@@ -78,12 +84,28 @@ import { Router } from '@angular/router';
         padding: 5px;
         cursor: pointer;
       }
-    `
-  ]
+    `,
+  ],
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   authService = inject(AuthService);
   router = inject(Router);
+  sidebarService = inject(SidebarService);
+
+  ngOnInit() {
+    this.updateSidebar(this.router.url);
+
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.updateSidebar(event.urlAfterRedirects);
+      });
+  }
+
+  private updateSidebar(url: string) {
+    const segment = url.split('?')[0].replace(/^\//, '').split('/')[0].toLowerCase();
+    this.sidebarService.set(!NonSidebarRoutes.includes(segment));
+  }
 
   logout() {
     this.authService.logout();

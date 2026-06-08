@@ -60,7 +60,7 @@ export class AuthFormComponent {
           this.router.navigate(["/dashboard"])
         },
         error: (error) => {
-          alert(error.error.message || 'Signup Failed');
+          alert(error.error.message || 'Login Failed');
           this.submitted.set(false);
         },
       });
