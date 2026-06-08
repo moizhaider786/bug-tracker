@@ -18,6 +18,7 @@ import { User } from '../../../core/models/user.model';
 import { BugStatus, BugType, UserRoles } from '../../../types/types';
 import { toTimelineSeconds, fromTimelineSeconds } from '../../../lib/utility';
 import { finalize } from 'rxjs';
+import { ProjectService } from '../../../core/services/project.service';
 
 @Component({
   selector: 'app-bug-form',
@@ -35,6 +36,7 @@ export class BugFormComponent implements OnInit, OnChanges {
   bugService = inject(BugService);
   userService = inject(UserService);
   authService = inject(AuthService);
+  projectService = inject(ProjectService);
   router = inject(Router);
 
   developers = signal<User[]>([]);
@@ -85,7 +87,7 @@ export class BugFormComponent implements OnInit, OnChanges {
         createdBy: [currentUser.id],
       });
 
-      this.userService.getAllUsers([UserRoles.DEVELOPER]).subscribe({
+      this.projectService.getProjectMembers(this.projectId(), UserRoles.DEVELOPER).subscribe({
         next: (users) => this.developers.set(users),
         error: (err) => alert('Failed to load developers: ' + (err.error?.message || err.message)),
       });

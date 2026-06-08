@@ -7,6 +7,8 @@ import {
   Patch,
   Get,
   Delete,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { ProjectService } from './project.service';
@@ -76,7 +78,11 @@ export class ProjectController {
   }
 
   @Get(':id/members')
-  async getProjectMembers(@Req() req: Request, @Param('id') id: number) {
-    return await this.projectService.getProjectMembers(id, req.user!.id);
+  async getProjectMembers(
+    @Req() req: Request,
+    @Param('id', ParseIntPipe) id: number,
+    @Query('role') role?: UserRoles,
+  ) {
+    return await this.projectService.getProjectMembers(id, req.user!.id, role);
   }
 }

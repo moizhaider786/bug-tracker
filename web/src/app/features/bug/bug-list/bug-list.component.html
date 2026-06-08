@@ -8,7 +8,7 @@
             {{ bug.status }}
           </span>
         </div>
-        <h4 class="bug-title">{{ bug.title }}</h4>
+        <h4 class="bug-title"><a [routerLink]="['/bugs', bug.id]">{{ bug.title }}</a></h4>
         <p class="bug-description">{{ bug.description }}</p>
         <div class="bug-footer">
           <span class="bug-deadline">

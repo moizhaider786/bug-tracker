@@ -3,7 +3,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
@@ -30,14 +30,14 @@ export class BugService {
         where: { projectId: data.projectId, userId: data.createdBy },
       }));
       if (!isProjectQa) {
-        throw new UnauthorizedException('You are not assigned to this project');
+        throw new ForbiddenException('You are not assigned to this project');
       }
       const isProjectDev = !!(await this.projectsToUsersRepo.findOne({
         where: { projectId: data.projectId, userId: data.developerId },
       }));
       if (!isProjectDev) {
-        throw new UnauthorizedException(
-          'The assigned developer is not part of this project',
+        throw new ForbiddenException(
+          'The assigned developer is not part of this project'
         );
       }
       const bug = this.bugsRepo.create(data);
@@ -65,7 +65,7 @@ export class BugService {
           where: { id, developerId: reqUserId },
         });
         if (!bug) {
-          throw new UnauthorizedException('You are not assigned to this bug');
+          throw new ForbiddenException('You are not assigned to this bug');
         }
         if (bug.type === BugType.BUG && bug.status === BugStatus.COMPLETED)
           throw new BadRequestException('Invalid bug status against bug type.');
@@ -82,12 +82,12 @@ export class BugService {
           where: { id, createdBy: reqUserId },
         });
         if (!bug) {
-          throw new UnauthorizedException('You did not create this bug');
+          throw new ForbiddenException('You did not create this bug');
         }
         Object.assign(bug, data);
         return await this.bugsRepo.save(bug);
       } else if (role === UserRoles.MANAGER) {
-        throw new UnauthorizedException('Managers cannot update bugs');
+        throw new ForbiddenException('Managers cannot update bugs');
       }
     } catch (error: any) {
       if (error instanceof QueryFailedError) {
@@ -142,14 +142,14 @@ export class BugService {
     }
     if (role === UserRoles.MANAGER) {
       if (bug.project.createdBy !== reqUserId) {
-        throw new UnauthorizedException('You did not create this project');
+        throw new ForbiddenException('You did not create this project');
       }
     } else if (role === UserRoles.QA) {
       if (bug.createdBy !== reqUserId) {
-        throw new UnauthorizedException('You did not create this bug');
+        throw new ForbiddenException('You did not create this bug');
       }
     } else if (role === UserRoles.DEVELOPER) {
-      throw new UnauthorizedException('Developers cannot delete bugs');
+      throw new ForbiddenException('Developers cannot delete bugs');
     }
     await this.bugsRepo.delete(id);
   }

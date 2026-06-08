@@ -3,7 +3,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -69,7 +69,7 @@ export class ProjectService {
       });
       if (!project) throw new NotFoundException('Project not found');
       if (project.createdBy !== reqUserId)
-        throw new UnauthorizedException(
+        throw new ForbiddenException(
           'Not authroized to update other manager projects',
         );
       if (members.some((userId) => userId === reqUserId))
@@ -98,7 +98,7 @@ export class ProjectService {
     });
     if (!project) throw new NotFoundException('Project not found');
     if (project.createdBy !== reqUserId)
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         'Not authroized to update other manager projects',
       );
     await this.projectsToUsersRepo.delete({
@@ -118,7 +118,7 @@ export class ProjectService {
       });
       if (!project) throw new NotFoundException('Project not found');
       if (project.createdBy !== reqUserId)
-        throw new UnauthorizedException(
+        throw new ForbiddenException(
           'Not authroized to update other manager projects',
         );
       if (data.name || data.description) {
@@ -146,26 +146,39 @@ export class ProjectService {
     return project;
   }
 
-  async getProjectMembers(id: number, reqUserId: number) {
+  async getProjectMembers(id: number, reqUserId: number, role?: UserRoles) {
+    const isMember = await this.projectsToUsersRepo.findOne({
+      where: {
+        projectId: id,
+        userId: reqUserId,
+      },
+    });
     const project = await this.projectRepo.findOne({
-      where: { id },
+      where: {
+        id,
+        ...(role && {
+          projectUsers: {
+            user: {
+              role: UserRoles.DEVELOPER,
+            },
+          },
+        }),
+      },
       relations: {
         projectUsers: {
           user: true,
         },
       },
     });
-
     if (!project) {
       throw new NotFoundException('Project not found');
     }
     const isOwner = project.createdBy === reqUserId;
-    const isMember = project.projectUsers.some((u) => u.user?.id === reqUserId);
     if (!isOwner && !isMember) {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         'You are not authorized to access this project members',
       );
     }
-    return project.projectUsers.map((m) => m.user).filter((user) => !!user); // Filter out any broken structural rows just in case
+    return project.projectUsers.map((m) => m.user).filter((user) => !!user);
   }
 }

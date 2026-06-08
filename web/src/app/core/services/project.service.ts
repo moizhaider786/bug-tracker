@@ -1,11 +1,12 @@
 import { Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { ProjectDto } from '../dtos/project/create-project.dto';
 import { updateProjectDto } from '../dtos/project/update-project.dto';
 import { environment } from '../../../environments/environment';
 import { Project, MemberProject } from '../models/project.model';
 import { User } from '../models/user.model';
+import { UserRoles } from '../../types/types';
 @Injectable({
   providedIn: 'root',
 })
@@ -19,6 +20,7 @@ export class ProjectService {
   }
 
   getProjects(): Observable<Project[]> {
+    console.log('yes comeon');
     return this.http.get<Project[]>(this.baseUrl).pipe(
       tap((projects) => {
         this.userProjects.set(projects);
@@ -42,7 +44,9 @@ export class ProjectService {
     });
   }
 
-  getProjectMembers(id: number): Observable<User[]> {
-    return this.http.get<User[]>(`${this.baseUrl}/${id}/members`);
+  getProjectMembers(id: number, role?: UserRoles): Observable<User[]> {
+    return this.http.get<User[]>(`${this.baseUrl}/${id}/members`, {
+      params: { ...(role && { role }) },
+    });
   }
 }

@@ -6,6 +6,8 @@ import { AuthGuard } from './features/auth/auth.guard';
 import { ProjectMemberPageComponent } from './features/project/project-member-page/project-member-page.component';
 import { ProjectDetailPageComponent } from './features/project/project-detail-page/project-detail-page.component';
 import { BugFormPageComponent } from './features/bug/bug-form-page/bug-form-page.component';
+import { BugsPageComponent } from './features/bug/bugs-page/bugs-page.component';
+import { BugDetailPageComponent } from './features/bug/bug-detail-page/bug-detail-page.component';
 
 export const routes: Routes = [
   { path: 'signup', component: AuthPageComponent },
@@ -41,7 +43,16 @@ export const routes: Routes = [
     component: BugFormPageComponent,
     canActivate: [AuthGuard],
   },
-  // Project detail — catch-all last
+  {
+    path: 'bugs',
+    component: BugsPageComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'bugs/:id',
+    component: BugDetailPageComponent,
+    canActivate: [AuthGuard],
+  },
   {
     path: 'projects/:id',
     component: ProjectDetailPageComponent,

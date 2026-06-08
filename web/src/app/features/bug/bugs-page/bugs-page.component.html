@@ -1,0 +1,30 @@
+<div class="bugs-page-container">
+  <div class="header-section">
+    <h1>All Bugs</h1>
+    <div class="filter-group">
+      <label for="projectFilter">Filter by Project:</label>
+      <select id="projectFilter" [(ngModel)]="selectedProjectId">
+        <option [value]="null">All Projects</option>
+        @for (project of projects(); track project.id) {
+          <option [value]="project.id">{{ project.name }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="projects-list">
+    @for (project of filteredProjects(); track project.id) {
+      <details class="project-bugs-collapsible" open>
+        <summary class="project-summary">
+          <h2>{{ project.name }}</h2>
+          <span class="project-desc">{{ project.description }}</span>
+        </summary>
+        <div class="bugs-wrapper">
+          <app-bug-list [projectId]="project.id"></app-bug-list>
+        </div>
+      </details>
+    } @empty {
+      <p class="empty-state">No projects found.</p>
+    }
+  </div>
+</div>

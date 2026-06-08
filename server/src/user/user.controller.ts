@@ -1,4 +1,9 @@
-import { Controller, ParseArrayPipe, Query } from '@nestjs/common';
+import {
+  Controller,
+  ParseArrayPipe,
+  ParseIntPipe,
+  Query,
+} from '@nestjs/common';
 import { Get, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { UserRoles } from 'src/types';

@@ -25,6 +25,9 @@ import { SidebarService } from '../services/sidebar.service';
             <li>
               <a routerLink="/projects" routerLinkActive="active">Projects</a>
             </li>
+            <li>
+              <a routerLink="/bugs" routerLinkActive="active">Bugs</a>
+            </li>
             @if (authService.hasRole('admin')) {
               <li>
                 <a routerLink="/users" routerLinkActive="active">Manage Users</a>
