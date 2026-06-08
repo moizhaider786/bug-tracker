@@ -1,6 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ProjectListComponent } from '../project-list/project-list.component';
 import { ProjectFormComponent } from '../project-form/project-form.component';
+import { AuthService } from '../../../core/services/auth.service';
+import { UserRoles } from '../../../types/types';
 @Component({
   selector: 'app-projects-page',
   imports: [ProjectFormComponent, ProjectListComponent],
@@ -11,6 +13,8 @@ export class ProjectsPageComponent {
   isProjectFormVisible = signal(false);
   isEditProjectForm = signal(false);
   editProjectId = signal<number | null>(null);
+  authService = inject(AuthService)
+  userRole = UserRoles;
 
   closeProjectForm() {
     this.isProjectFormVisible.set(false);

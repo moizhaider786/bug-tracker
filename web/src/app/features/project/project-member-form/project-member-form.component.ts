@@ -14,6 +14,8 @@ import { User } from '../../../core/models/user.model';
 import { UserRoles } from '../../../types/types';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-project-member-form',
@@ -35,7 +37,7 @@ export class ProjectMemberFormComponent implements OnChanges, OnInit {
   searchControl = new FormControl('');
   selectedUsers = signal<User[]>([]);
 
-
+  isSubmitted = signal<boolean>(false);
 
   ngOnInit() {
     this.userService.getAllUsers([UserRoles.DEVELOPER, UserRoles.QA]).subscribe({
@@ -79,6 +81,8 @@ export class ProjectMemberFormComponent implements OnChanges, OnInit {
   }
 
   onSubmit() {
+    if (this.isSubmitted()) return;
+    this.isSubmitted.set(true);
     const selectedIds = this.selectedUsers().map((u) => u.id);
     if (selectedIds.length === 0) return alert('Please select at least one user');
 
@@ -86,8 +90,18 @@ export class ProjectMemberFormComponent implements OnChanges, OnInit {
       ? this.projectService.addMembers(this.projectId(), selectedIds)
       : this.projectService.removeMembers(this.projectId(), selectedIds);
 
-    action.subscribe({
-      next: () => this.router.navigate(['/projects']),
+    action.pipe(finalize(() => this.isSubmitted.set(false))).subscribe({
+      next: () => {
+        alert(this.isAddForm() ? 'Members added Successfully' : 'Members removed Successfully');
+        this.router.navigate(['/projects']);
+      },
+      error: (error: HttpErrorResponse) => {
+        alert(
+          error.error.message || this.isAddForm()
+            ? 'Error adding members'
+            : 'Error removing members',
+        );
+      },
     });
   }
 }

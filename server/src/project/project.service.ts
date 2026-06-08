@@ -128,7 +128,12 @@ export class ProjectService {
         });
       }
     } catch (error: any) {
-      console.log('Custom Error ', error);
+      if (error instanceof QueryFailedError) {
+        const code = (error.driverError as { code?: string }).code;
+        if (code === 'ER_DUP_ENTRY') {
+          throw new ConflictException('Project name already exist');
+        }
+      }
       throw error;
     }
   }

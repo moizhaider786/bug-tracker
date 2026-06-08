@@ -1,7 +1,9 @@
 <div class="projects-page-container">
   <div class="header-actions">
     <h1>Projects</h1>
-    <button class="btn-create" (click)="openProjectForm(false)">Create Project</button>
+    @if (authService.hasRole(userRole.MANAGER)) {
+      <button class="btn-create" (click)="openProjectForm(false)">Create Project</button>
+    }
   </div>
 
   @if (isProjectFormVisible()) {

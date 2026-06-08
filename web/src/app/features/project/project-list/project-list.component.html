@@ -5,13 +5,15 @@
       <p>{{ project.description }}</p>
       <div class="project-actions">
         <button [routerLink]="['/projects', project.id]" class="btn btn-secondary">Details</button>
-        <button (click)="editProject.emit(project.id)" class="btn btn-secondary">Edit</button>
-        <a [routerLink]="['/projects', project.id, 'add-members']" class="btn btn-primary"
-          >Add Members</a
-        >
-        <a [routerLink]="['/projects', project.id, 'remove-members']" class="btn btn-danger"
-          >Remove Members</a
-        >
+        @if (authService.hasRole(userRoles.MANAGER)) {
+          <button (click)="editProject.emit(project.id)" class="btn btn-secondary">Edit</button>
+          <a [routerLink]="['/projects', project.id, 'add-members']" class="btn btn-primary"
+            >Add Members</a
+          >
+          <a [routerLink]="['/projects', project.id, 'remove-members']" class="btn btn-danger"
+            >Remove Members</a
+          >
+        }
       </div>
     </div>
   } @empty {
