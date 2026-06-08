@@ -33,6 +33,7 @@ import { SidebarService } from '../services/sidebar.service';
                 <a routerLink="/users" routerLinkActive="active">Manage Users</a>
               </li>
             }
+            <li><a routerLink="/profile" routerLinkActive="active">Profile</a></li>
           </ul>
         </nav>
         <div class="sidebar-footer">
@@ -81,6 +82,7 @@ import { SidebarService } from '../services/sidebar.service';
         margin-top: auto;
         border-top: 1px solid #ccc;
         padding-top: 10px;
+        padding-bottom: 30px;
       }
       .logout-btn {
         width: 100%;

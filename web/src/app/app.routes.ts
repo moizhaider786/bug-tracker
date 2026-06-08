@@ -8,6 +8,7 @@ import { ProjectDetailPageComponent } from './features/project/project-detail-pa
 import { BugFormPageComponent } from './features/bug/bug-form-page/bug-form-page.component';
 import { BugsPageComponent } from './features/bug/bugs-page/bugs-page.component';
 import { BugDetailPageComponent } from './features/bug/bug-detail-page/bug-detail-page.component';
+import { ProfilePageComponent } from './features/profile/profile-page/profile-page.component';
 
 export const routes: Routes = [
   { path: 'signup', component: AuthPageComponent },
@@ -56,6 +57,11 @@ export const routes: Routes = [
   {
     path: 'projects/:id',
     component: ProjectDetailPageComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'profile',
+    component: ProfilePageComponent,
     canActivate: [AuthGuard],
   },
 ];

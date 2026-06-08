@@ -33,6 +33,9 @@ export class AuthService {
     localStorage.removeItem('access_token');
     localStorage.removeItem('user');
   }
+  getProfile(): Observable<User> {
+    return this.httpClient.get<User>(`${this.apiUrl}/me`);
+  }
   getToken(): string | null {
     return localStorage.getItem('access_token');
   }
@@ -46,6 +49,6 @@ export class AuthService {
     const user = this.getUser();
     if (!user) return false;
     const parsedUser = JSON.parse(user);
-    return role===parsedUser.role;
+    return role === parsedUser.role;
   }
 }

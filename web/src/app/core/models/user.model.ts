@@ -5,4 +5,5 @@ export interface User {
     email: string,
     role: UserRoles,
     password: string,
+    createdAt?: string,
 }
