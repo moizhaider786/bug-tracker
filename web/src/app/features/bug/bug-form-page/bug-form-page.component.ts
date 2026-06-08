@@ -17,8 +17,8 @@ import { BugFormComponent } from '../bug-form/bug-form.component';
     </div>
   `,
   styles: [`
-    .page-container { padding: 1rem; }
-    h1 { margin-bottom: 1rem; }
+    .page-container { padding: 2rem; }
+    h1 { margin-bottom: 1.5rem; color: var(--color-text); }
   `],
 })
 export class BugFormPageComponent implements OnInit {

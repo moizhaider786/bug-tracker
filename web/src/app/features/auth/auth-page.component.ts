@@ -18,11 +18,14 @@ import { ActivatedRoute } from '@angular/router';
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding-top: 3rem;
+        padding-top: 5rem;
+        background-color: var(--color-bg);
       }
 
       h1 {
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        color: var(--color-text);
+        font-weight: 600;
       }
     `,
   ],

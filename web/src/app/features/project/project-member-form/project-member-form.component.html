@@ -46,7 +46,7 @@
 
   <div class="form-actions">
     <button
-      class="btn-cancel"
+      class="btn-secondary"
       routerLink="/projects"
       type="button"
       (click)="router.navigate(['/projects'])"
@@ -54,7 +54,7 @@
       Cancel
     </button>
     <button
-      class="btn-submit"
+      class="btn-primary"
       [disabled]="selectedUsers().length === 0"
       (click)="onSubmit()"
       type="button"

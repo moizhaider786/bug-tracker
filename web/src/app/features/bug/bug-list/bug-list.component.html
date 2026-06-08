@@ -16,11 +16,11 @@
           </span>
           @if (isQA || isDev) {
             <div class="bug-actions">
-              <a class="btn-edit" [routerLink]="['/projects', projectId(), 'bugs', bug.id, 'edit']"
+              <a class="btn-secondary" [routerLink]="['/projects', projectId(), 'bugs', bug.id, 'edit']"
                 >Edit</a
               >
               @if (isQA) {
-                <button class="btn-delete" type="button" (click)="deleteBug(bug.id)">Delete</button>
+                <button class="btn-danger" type="button" (click)="deleteBug(bug.id)">Delete</button>
               }
             </div>
           }

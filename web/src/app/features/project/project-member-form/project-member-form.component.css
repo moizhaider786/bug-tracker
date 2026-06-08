@@ -1,66 +1,128 @@
 .member-form-container {
-  border: 1px solid #ccc;
-  padding: 1rem;
+  border: 1px solid var(--color-border);
+  padding: 1.5rem;
   max-width: 600px;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .search-section {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .search-input {
   width: 100%;
-  padding: 5px;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .users-grid {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.users-grid h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.5rem;
 }
 
 .user-cards {
-  border: 1px solid #eee;
-  padding: 5px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.5rem;
   max-height: 200px;
   overflow-y: auto;
+  background: var(--color-bg);
 }
 
 .user-card {
-  border: 1px solid #ccc;
-  padding: 5px;
-  margin-bottom: 5px;
+  border: 1px solid var(--color-border);
+  background: white;
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.user-card:last-child {
+  margin-bottom: 0;
 }
 
 .user-card:hover {
-  background-color: #f9f9f9;
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
 }
 
 .user-card.selected {
-  background-color: #e0f7fa;
+  background-color: #eff6ff;
+  border-color: var(--color-primary);
+  border-left: 4px solid var(--color-primary);
+}
+
+.user-info h4 {
+  margin: 0 0 0.25rem;
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+.user-info p {
+  margin: 0 0 0.25rem;
+  font-size: 0.85rem;
+  color: var(--color-text-light);
 }
 
 .role-badge {
-  font-size: 0.8em;
-  background: #eee;
-  padding: 2px 4px;
+  font-size: 0.75rem;
+  background: #f3f4f6;
+  color: var(--color-text-light);
+  padding: 2px 6px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
 }
 
 .empty-state {
-  color: #888;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--color-danger);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.remove-btn:hover {
+  color: var(--color-danger-hover);
 }
 
 .form-actions {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   display: flex;
-  gap: 10px;
-}
-
-button {
-  padding: 5px 10px;
-  cursor: pointer;
+  gap: 0.75rem;
+  justify-content: flex-end;
 }

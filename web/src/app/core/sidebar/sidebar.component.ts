@@ -45,20 +45,28 @@ import { SidebarService } from '../services/sidebar.service';
   styles: [
     `
       .sidebar {
-        width: 200px;
+        width: 220px;
         height: 100vh;
-        background-color: #f0f0f0;
-        border-right: 1px solid #ccc;
+        background-color: #1f2937;
+        color: white;
         display: flex;
         flex-direction: column;
         position: fixed;
         left: 0;
         top: 0;
-        padding: 10px;
+        padding: 1rem;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
       }
       .sidebar-header {
-        border-bottom: 1px solid #ccc;
-        margin-bottom: 10px;
+        border-bottom: 1px solid #374151;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+      }
+      .sidebar-header h2 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: white;
       }
       .sidebar-nav ul {
         list-style: none;
@@ -66,28 +74,45 @@ import { SidebarService } from '../services/sidebar.service';
         margin: 0;
       }
       .sidebar-nav li {
-        margin-bottom: 5px;
+        margin-bottom: 0.25rem;
       }
       .sidebar-nav a {
         display: block;
-        padding: 5px;
-        color: #333;
+        padding: 0.75rem 1rem;
+        color: #d1d5db;
         text-decoration: none;
+        border-radius: 6px;
+        transition: background-color 0.2s, color 0.2s;
+      }
+      .sidebar-nav a:hover {
+        background-color: #374151;
+        color: white;
       }
       .sidebar-nav a.active {
-        font-weight: bold;
-        background-color: #ddd;
+        background-color: #2563eb;
+        color: white;
+        font-weight: 500;
       }
       .sidebar-footer {
         margin-top: auto;
-        border-top: 1px solid #ccc;
-        padding-top: 10px;
-        padding-bottom: 30px;
+        border-top: 1px solid #374151;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
       }
       .logout-btn {
         width: 100%;
-        padding: 5px;
+        padding: 0.75rem;
         cursor: pointer;
+        background-color: transparent;
+        color: #d1d5db;
+        border: 1px solid #4b5563;
+        border-radius: 6px;
+        transition: background-color 0.2s, color 0.2s;
+        font-weight: 500;
+      }
+      .logout-btn:hover {
+        background-color: #374151;
+        color: white;
       }
     `,
   ],

@@ -24,10 +24,11 @@ import { UserRoles } from '../../../types/types';
   styles: [
     `
       .page-container {
-        padding: 1rem;
+        padding: 2rem;
       }
       h1 {
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        color: var(--color-text);
       }
     `,
   ],

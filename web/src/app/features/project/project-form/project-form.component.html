@@ -1,25 +1,34 @@
 @if (isAuthorized()) {
-  <form (ngSubmit)="onSubmit()">
-    <label for="name">Project Name:</label>
-    <input
-      type="text"
-      id="name"
-      name="name"
-      required
-      [(ngModel)]="projectFormData.name"
-      #name="ngModel"
-    />
-    @if (name.invalid && (name.touched || name.dirty)) {
-      <div class="error">Project name is required.</div>
-    }
-    <label for="description">Description:</label>
-    <textarea
-      id="description"
-      name="description"
-      [(ngModel)]="projectFormData.description"
-    ></textarea>
-    <button type="submit">
-      {{ isEditForm() ? 'Update Project' : 'Create Project' }}
-    </button>
+  <form (ngSubmit)="onSubmit()" class="project-form">
+    <div class="form-group">
+      <label for="name">Project Name:</label>
+      <input
+        class="form-input"
+        type="text"
+        id="name"
+        name="name"
+        required
+        [(ngModel)]="projectFormData.name"
+        #name="ngModel"
+      />
+      @if (name.invalid && (name.touched || name.dirty)) {
+        <div class="error">Project name is required.</div>
+      }
+    </div>
+    <div class="form-group">
+      <label for="description">Description:</label>
+      <textarea
+        class="form-input"
+        id="description"
+        name="description"
+        rows="4"
+        [(ngModel)]="projectFormData.description"
+      ></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn-primary" type="submit">
+        {{ isEditForm() ? 'Update Project' : 'Create Project' }}
+      </button>
+    </div>
   </form>
 }

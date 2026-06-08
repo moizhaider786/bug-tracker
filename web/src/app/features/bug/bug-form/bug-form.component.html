@@ -98,17 +98,17 @@
     }
 
     <div class="form-actions">
-      <button type="button" class="btn-cancel" (click)="navigateBack()">Cancel</button>
+      <button type="button" class="btn-secondary" (click)="navigateBack()">Cancel</button>
       @if (isEditMode()) {
-        <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
           {{ isSubmitting() ? 'Saving...' : 'Update Bug' }}
         </button>
       } @else if (!createdBugId()) {
-        <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
           {{ isSubmitting() ? 'Saving...' : 'Create Bug' }}
         </button>
       } @else {
-        <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
           {{ isSubmitting() ? 'Uploading...' : 'Upload Screenshot' }}
         </button>
       }

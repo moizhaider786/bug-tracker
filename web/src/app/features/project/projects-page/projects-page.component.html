@@ -2,17 +2,22 @@
   <div class="header-actions">
     <h1>Projects</h1>
     @if (authService.hasRole(userRole.MANAGER)) {
-      <button class="btn-create" (click)="openProjectForm(false)">Create Project</button>
+      <button class="btn-primary" (click)="openProjectForm(false)">Create Project</button>
     }
   </div>
 
   @if (isProjectFormVisible()) {
-    <div class="prjform-modal">
-      <button class="btn-close" (click)="closeProjectForm()">X</button>
-      <app-project-form
-        [isEditForm]="isEditProjectForm()"
-        [editProjectId]="editProjectId()"
-      ></app-project-form>
+    <div class="modal-overlay" (click)="closeProjectForm()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ isEditProjectForm() ? 'Edit Project' : 'Create Project' }}</h2>
+          <button class="btn-close" (click)="closeProjectForm()" aria-label="Close">&#10005;</button>
+        </div>
+        <app-project-form
+          [isEditForm]="isEditProjectForm()"
+          [editProjectId]="editProjectId()"
+        ></app-project-form>
+      </div>
     </div>
   }
 
