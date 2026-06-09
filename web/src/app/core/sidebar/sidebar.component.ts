@@ -138,7 +138,11 @@ export class SidebarComponent implements OnInit {
   }
 
   logout() {
-    this.authService.logout();
+    this.authService.logout().subscribe({
+      error(error: any) {
+        alert('Error Logging out');
+      },
+    });
     this.router.navigate(['/login'], { replaceUrl: true });
   }
 }

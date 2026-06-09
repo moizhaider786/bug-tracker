@@ -32,7 +32,6 @@ export class AuthController {
     @Body() body: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log('body ', body);
     const userData = await this.authService.login(body);
 
     const tokens = await this.authService.generateTokens(
@@ -51,13 +50,15 @@ export class AuthController {
       access_token: tokens.accessToken,
     };
   }
-
+  @Public()
   @Post('refresh')
   async refresh(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const refreshToken: string = req.cookies['refresh_token'] as string;
+    const refreshToken = (req.cookies as Record<string, string>)[
+      'refresh_token'
+    ];
     if (!refreshToken) throw new UnauthorizedException();
 
     try {
@@ -81,13 +82,22 @@ export class AuthController {
       });
 
       return { access_token: tokens.accessToken };
-    } catch {
-      throw new UnauthorizedException();
+    } catch (error: any) {
+      console.log('Error ', error);
+      throw new UnauthorizedException(
+        error?.message || 'Failed refreshing token',
+      );
     }
   }
 
   @Get('me')
   async getProfile(@Req() req: Request) {
     return await this.userService.findOneById(req.user!.id);
+  }
+
+  @Post('logout')
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('refresh_token');
+    return { message: 'Logged out successfully' };
   }
 }
