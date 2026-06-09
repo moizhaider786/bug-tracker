@@ -1,4 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { environment } from '../../../environments/environment';
@@ -10,44 +11,63 @@ export interface AppNotification {
   description?: string;
   type: NotificationTypes;
   createdAt: Date;
+  isRead: boolean;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NotificationService {
-  constructor(private authService: AuthService, private zone: NgZone) {}
+  private apiUrl = `${environment.apiUrl}/notification`;
+
+  constructor(
+    private authService: AuthService,
+    private http: HttpClient,
+    private zone: NgZone,
+  ) {}
+
+  getNotifications(): Observable<AppNotification[]> {
+    return this.http.get<AppNotification[]>(this.apiUrl);
+  }
+
+  markAsRead(notificationId: number): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/${notificationId}/read`, {});
+  }
 
   getServerSentEvent(): Observable<AppNotification> {
-    return new Observable((observer) => {
-      const token = this.authService.getToken();
-      if (!token) {
-        observer.error('No token found');
-        return;
-      }
+    return new Observable<AppNotification>((observer) => {
+      let eventSource: EventSource | null = null;
 
-      const eventSource = new EventSource(`${environment.apiUrl}/notification/stream?token=${token}`);
+      const connect = () => {
+        const token = this.authService.getToken();
+        if (!token) {
+          observer.error('No token found');
+          return;
+        }
 
-      eventSource.onmessage = (event) => {
-        this.zone.run(() => {
-          try {
-            const data = JSON.parse(event.data);
-            observer.next(data);
-          } catch (e) {
-            console.error('Error parsing notification data', e);
-          }
-        });
+        eventSource = new EventSource(`${this.apiUrl}/stream?token=${token}`);
+
+        eventSource.onmessage = (event) => {
+          this.zone.run(() => {
+            try {
+              const data: AppNotification = JSON.parse(event.data as string);
+              observer.next(data);
+            } catch (e) {
+              console.error('Error parsing SSE notification', e);
+            }
+          });
+        };
+
+        eventSource.onerror = () => {
+          eventSource?.close();
+          eventSource = null;
+        };
       };
 
-      eventSource.onerror = (error) => {
-        this.zone.run(() => {
-          observer.error(error);
-          eventSource.close();
-        });
-      };
+      connect();
 
       return () => {
-        eventSource.close();
+        eventSource?.close();
       };
     });
   }

@@ -1,14 +1,34 @@
-import { Controller, Sse, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Param,
+  ParseIntPipe,
+  Req,
+  Sse,
+} from '@nestjs/common';
+import type { Request } from 'express';
 import { NotificationService } from './notification.service';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('notification')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
-  @UseGuards(AuthGuard)
   @Sse('stream')
-  stream(@Req() req: any) {
-    return this.notificationService.streamNotification(req.user.id);
+  stream(@Req() req: Request) {
+    return this.notificationService.streamNotification(req.user!.id);
+  }
+
+  @Get()
+  getAll(@Req() req: Request) {
+    return this.notificationService.get(req.user!.id);
+  }
+
+  @Patch(':id/read')
+  markRead(
+    @Req() req: Request,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.notificationService.markAsRead(id, req.user!.id);
   }
 }

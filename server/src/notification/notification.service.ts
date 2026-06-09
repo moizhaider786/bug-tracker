@@ -7,6 +7,8 @@ import { NotificationsToUsers } from './notification-to-user.entity';
 import { Subject, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
+export type NotificationWithReadStatus = Notifications & { isRead: boolean };
+
 @Injectable()
 export class NotificationService {
   constructor(
@@ -16,26 +18,26 @@ export class NotificationService {
     private notificationsToUsersRepo: Repository<NotificationsToUsers>,
   ) {}
 
-  private notificationSubject = new Subject<{ userId: number; notification: Notifications }>();
-
+  private notificationSubject = new Subject<{
+    userId: number;
+    notification: Notifications;
+  }>();
 
   async create(data: CreateNotificationDto) {
     const { users, ...notificationsData } = data;
     const notification = this.notificationsRepo.create(notificationsData);
     const newNotification = await this.notificationsRepo.save(notification);
+
     if (users?.length) {
       await this.notificationsToUsersRepo.insert(
-        users?.map((userId) => ({
+        users.map((userId) => ({
           notificationId: newNotification.id,
           recieverId: userId,
         })),
       );
 
       users.forEach((userId) => {
-        this.notificationSubject.next({
-          userId,
-          notification: newNotification,
-        });
+        this.notificationSubject.next({ userId, notification: newNotification });
       });
     }
     return newNotification;
@@ -45,18 +47,24 @@ export class NotificationService {
     return this.notificationSubject.asObservable().pipe(
       filter((event) => event.userId === userId),
       map((event) => ({
-        data: event.notification,
+        data: { ...event.notification, isRead: false },
       })),
     );
   }
-  async get(userId: number) {
-    const userNotifications = await this.notificationsToUsersRepo.find({
+
+  async get(userId: number): Promise<NotificationWithReadStatus[]> {
+    const rows = await this.notificationsToUsersRepo.find({
       where: { recieverId: userId },
-      relations: {
-        notification: true,
-      },
-      select: { notification: true },
+      relations: { notification: true },
+      order: { notification: { createdAt: 'DESC' } },
     });
-    return userNotifications.map((uf) => uf.notification);
+    return rows.map((row) => ({ ...row.notification, isRead: row.isRead }));
+  }
+
+  async markAsRead(notificationId: number, userId: number): Promise<void> {
+    await this.notificationsToUsersRepo.update(
+      { notificationId, recieverId: userId },
+      { isRead: true },
+    );
   }
 }
