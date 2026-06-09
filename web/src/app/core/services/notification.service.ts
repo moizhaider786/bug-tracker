@@ -48,14 +48,12 @@ export class NotificationService {
         eventSource = new EventSource(`${this.apiUrl}/stream?token=${token}`);
 
         eventSource.onmessage = (event) => {
-          this.zone.run(() => {
-            try {
-              const data: AppNotification = JSON.parse(event.data as string);
-              observer.next(data);
-            } catch (e) {
-              console.error('Error parsing SSE notification', e);
-            }
-          });
+          try {
+            const data: AppNotification = JSON.parse(event.data as string);
+            observer.next(data);
+          } catch (e) {
+            console.error('Error parsing SSE notification', e);
+          }
         };
 
         eventSource.onerror = () => {

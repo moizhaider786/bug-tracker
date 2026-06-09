@@ -9,10 +9,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 import { CreateBugDto } from './dto/create-bug.dto';
 import { Bugs } from './bug.entity';
-import { BugStatus, BugType, UserRoles } from 'src/types';
+import { BugStatus, BugType, NotificationTypes, UserRoles } from 'src/types';
 import { Projects } from 'src/project/project.entity';
 import { ProjectsToUsers } from 'src/project/project-to-user.entity';
 import { UpdateBugDto } from './dto/update-bug.dto';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class BugService {
@@ -22,6 +23,7 @@ export class BugService {
     private readonly projectsRepo: Repository<Projects>,
     @InjectRepository(ProjectsToUsers)
     private readonly projectsToUsersRepo: Repository<ProjectsToUsers>,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async createBug(data: CreateBugDto) {
@@ -37,11 +39,24 @@ export class BugService {
       }));
       if (!isProjectDev) {
         throw new ForbiddenException(
-          'The assigned developer is not part of this project'
+          'The assigned developer is not part of this project',
         );
       }
       const bug = this.bugsRepo.create(data);
-      return await this.bugsRepo.save(bug);
+      const newBug = await this.bugsRepo.save(bug);
+
+      this.notificationService
+        .create({
+          title: 'New Bug Assigned',
+          description: `You have been assigned a new bug: "${newBug.title}"`,
+          type: NotificationTypes.CREATE_BUG,
+          users: [newBug.developerId],
+        })
+        .catch((error: Error) =>
+          console.log('Error Sending Bug Creation Notification: ', error?.message),
+        );
+
+      return newBug;
     } catch (error: any) {
       if (error instanceof QueryFailedError) {
         const code = (error.driverError as { code?: string }).code;
@@ -76,7 +91,20 @@ export class BugService {
           throw new BadRequestException('Invalid bug status against bug type.');
         bug.status = data.status ?? bug.status;
         bug.timelineSeconds = data.timelineSeconds ?? bug.timelineSeconds;
-        return await this.bugsRepo.save(bug);
+        const updatedBug = await this.bugsRepo.save(bug);
+
+        this.notificationService
+          .create({
+            title: 'Bug Status Updated',
+            description: `Bug "${updatedBug.title}" status changed to ${updatedBug.status}`,
+            type: NotificationTypes.UPDATE_BUG,
+            users: [updatedBug.createdBy],
+          })
+          .catch((error: Error) =>
+            console.log('Error Sending Bug Update Notification: ', error?.message),
+          );
+
+        return updatedBug;
       } else if (role === UserRoles.QA) {
         const bug = await this.bugsRepo.findOne({
           where: { id, createdBy: reqUserId },
@@ -85,7 +113,20 @@ export class BugService {
           throw new ForbiddenException('You did not create this bug');
         }
         Object.assign(bug, data);
-        return await this.bugsRepo.save(bug);
+        const updatedBug = await this.bugsRepo.save(bug);
+
+        this.notificationService
+          .create({
+            title: 'Bug Updated',
+            description: `Bug "${updatedBug.title}" has been updated`,
+            type: NotificationTypes.UPDATE_BUG,
+            users: [updatedBug.developerId],
+          })
+          .catch((error: Error) =>
+            console.log('Error Sending Bug Update Notification: ', error?.message),
+          );
+
+        return updatedBug;
       } else if (role === UserRoles.MANAGER) {
         throw new ForbiddenException('Managers cannot update bugs');
       }
@@ -128,6 +169,7 @@ export class BugService {
       });
     }
   }
+
   async getBugById(id: number) {
     return await this.bugsRepo.findOne({ where: { id } });
   }
@@ -151,6 +193,18 @@ export class BugService {
     } else if (role === UserRoles.DEVELOPER) {
       throw new ForbiddenException('Developers cannot delete bugs');
     }
+
     await this.bugsRepo.delete(id);
+
+    this.notificationService
+      .create({
+        title: 'Bug Deleted',
+        description: `Bug "${bug.title}" has been removed`,
+        type: NotificationTypes.DELETE_BUG,
+        users: [bug.developerId],
+      })
+      .catch((error: Error) =>
+        console.log('Error Sending Bug Delete Notification: ', error?.message),
+      );
   }
 }

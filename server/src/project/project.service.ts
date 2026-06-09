@@ -154,7 +154,7 @@ export class ProjectService {
   ) {
     try {
       const project = await this.projectRepo.findOne({
-        where: { id: projectId },
+        where: { id: projectId }, relations: { projectUsers: true },
       });
       if (!project) throw new NotFoundException('Project not found');
       if (project.createdBy !== reqUserId)
@@ -167,6 +167,22 @@ export class ProjectService {
           ...(data.description ? { description: data.description } : {}),
         });
       }
+      this.notificationService
+        .create({
+          title: 'Project Updated',
+          description: `Project "${project.name}" has been updated`,
+          type: NotificationTypes.UPDATE_PROJECT,
+          users: [
+            project.createdBy,
+            ...project.projectUsers.map((pu) => pu.userId),
+          ],
+        })
+        .catch((error: Error) =>
+          console.log(
+            'Error Sending Project Update Notification: ',
+            error?.message,
+          ),
+        );
     } catch (error: any) {
       if (error instanceof QueryFailedError) {
         const code = (error.driverError as { code?: string }).code;

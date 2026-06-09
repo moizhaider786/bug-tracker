@@ -48,13 +48,17 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
 
-    if (this.isDropdownOpen) {
+    if (!this.isDropdownOpen) {
       const unread = this.notifications().filter((n) => !n.isRead);
+      if (!unread.length) return;
+      this.notifications.update((notifs) =>
+        notifs.map((n) => (n.isRead ? n : { ...n, isRead: true })),
+      );
+
       unread.forEach((notif) => {
         this.notificationService.markAsRead(notif.id).subscribe({
-          error: (err) => console.error(`Failed to mark notification ${notif.id} as read`, err),
+          error: (err) => console.error(`Failed to mark ${notif.id} as read`, err),
         });
-        notif.isRead = true;
       });
     }
   }
