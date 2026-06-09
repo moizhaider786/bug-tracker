@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ProjectModule } from './project/project.module';
 import { BugModule } from './bug/bug.module';
 import { SupabaseModule } from './supabase/supabase.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { SupabaseModule } from './supabase/supabase.module';
     ProjectModule,
     BugModule,
     SupabaseModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
