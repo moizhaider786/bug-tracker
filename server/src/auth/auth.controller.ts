@@ -78,7 +78,7 @@ export class AuthController {
         httpOnly: true,
         secure: this.configService.get<string>('NODE_ENV') === 'production',
         sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: jwtConstants.refreshTokenExpiryTime,
       });
 
       return { access_token: tokens.accessToken };
