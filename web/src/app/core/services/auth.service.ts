@@ -20,7 +20,9 @@ export class AuthService {
 
   login(data: LoginDto): Observable<Omit<User, 'password'> & { access_token: string }> {
     return this.httpClient
-      .post<Omit<User, 'password'> & { access_token: string }>(`${this.apiUrl}/login`, data)
+      .post<
+        Omit<User, 'password'> & { access_token: string }
+      >(`${this.apiUrl}/login`, data, { withCredentials: true })
       .pipe(
         tap((res) => {
           const payload = { id: res.id, email: res.email, role: res.role };

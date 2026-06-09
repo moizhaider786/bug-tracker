@@ -95,9 +95,14 @@ export class AuthController {
     return await this.userService.findOneById(req.user!.id);
   }
 
+  @Public()
   @Post('logout')
   logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('refresh_token');
+    res.clearCookie('refresh_token', {
+      httpOnly: true,
+      secure: this.configService.get<string>('NODE_ENV') === 'production',
+      sameSite: 'lax',
+    });
     return { message: 'Logged out successfully' };
   }
 }

@@ -1,4 +1,4 @@
-import { IsPositive } from 'class-validator';
+import { IsNumber, Min } from 'class-validator';
 import { BugType, BugStatus } from 'src/types';
 export class UpdateBugDto {
   title?: string;
@@ -9,6 +9,7 @@ export class UpdateBugDto {
   deadline?: Date;
   developerId?: number;
 
-  @IsPositive()
+  @IsNumber()
+  @Min(0)
   timelineSeconds?: number
 }
