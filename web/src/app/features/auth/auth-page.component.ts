@@ -37,7 +37,6 @@ export class AuthPageComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.url.subscribe({
       next: (url) => {
-        console.log(url);
         this.isSignupForm.set(url[0].path.toLowerCase() === 'signup' ? true : false);
       },
     });

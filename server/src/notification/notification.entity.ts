@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { NotificationsToUsers } from './notification-to-user..entity';
+import { NotificationsToUsers } from './notification-to-user.entity';
 
 @Entity()
 export class Notifications {

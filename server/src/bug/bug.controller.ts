@@ -84,7 +84,6 @@ export class BugController {
     file: Express.Multer.File,
     @Param('id') id: number,
   ) {
-    console.log('file ', file);
     const fileName = `${id}-${Date.now()}-${file.originalname}`;
 
     const { data, error } = await this.supabaseService

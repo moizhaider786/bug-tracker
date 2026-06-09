@@ -3,10 +3,10 @@ import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from './core/sidebar/sidebar.component';
 import { AuthService } from './core/services/auth.service';
 import { SidebarService } from './core/services/sidebar.service';
-
+import { NotificationBellComponent } from './core/components/notification-bell/notification-bell.component';
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SidebarComponent],
+  imports: [RouterOutlet, SidebarComponent, NotificationBellComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })

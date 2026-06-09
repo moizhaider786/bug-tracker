@@ -13,7 +13,8 @@ import { Projects } from './project.entity';
 import { ProjectsToUsers } from './project-to-user.entity';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { UserRoles } from 'src/types';
+import { NotificationTypes, UserRoles } from 'src/types';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class ProjectService {
@@ -22,12 +23,27 @@ export class ProjectService {
     private readonly projectRepo: Repository<Projects>,
     @InjectRepository(ProjectsToUsers)
     private readonly projectsToUsersRepo: Repository<ProjectsToUsers>,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async createProject(data: CreateProjectDto) {
     const project = this.projectRepo.create(data);
     try {
-      return await this.projectRepo.save(project);
+      const newProject = await this.projectRepo.save(project);
+      this.notificationService
+        .create({
+          title: 'New Project Created',
+          description: `You have been added to project "${project.name}"`,
+          type: NotificationTypes.CREATE_PROJECT,
+          users: [project.createdBy],
+        })
+        .catch((error: Error) =>
+          console.log(
+            'Error Sending Project Creation Notification: ',
+            error?.message,
+          ),
+        );
+      return newProject;
     } catch (error: any) {
       if (error instanceof QueryFailedError) {
         const code = (error.driverError as { code?: string }).code;
@@ -48,8 +64,7 @@ export class ProjectService {
         where: { userId: userId },
         relations: { project: true },
       });
-      console.log('User id ', userId);
-      console.log('user projects ', JSON.stringify(userProjects, null, 2));
+
       projects = userProjects.map((up) => ({
         assignedAt: up.assignedAt,
         ...up.project,
@@ -77,15 +92,27 @@ export class ProjectService {
       const filteredMembers = members.filter(
         (userId) => !project.projectUsers.some((pu) => pu.userId === userId),
       );
-      console.log('members ', members);
-      console.log('filtered members ', filteredMembers);
-      console.log('project users ', project.projectUsers);
-      await this.projectsToUsersRepo.save(
-        filteredMembers.map((userId) => ({
-          projectId: projectId,
-          userId,
-        })),
-      );
+      if (filteredMembers.length) {
+        await this.projectsToUsersRepo.save(
+          filteredMembers.map((userId) => ({
+            projectId: projectId,
+            userId,
+          })),
+        );
+        this.notificationService
+          .create({
+            title: 'Added to Project',
+            description: `You have been added to project "${project.name}"`,
+            type: NotificationTypes.UPDATE_PROJECT,
+            users: filteredMembers,
+          })
+          .catch((error: Error) =>
+            console.log(
+              'Error Sending Add Members Notification: ',
+              error?.message,
+            ),
+          );
+      }
     } catch (error: any) {
       console.log('Custom Error ', JSON.stringify(error, null, 2));
       throw error;
@@ -105,6 +132,19 @@ export class ProjectService {
       projectId: projectId,
       userId: In(members),
     });
+    this.notificationService
+      .create({
+        title: 'Removed from Project',
+        description: `You have been removed from project "${project.name}"`,
+        type: NotificationTypes.UPDATE_PROJECT,
+        users: members,
+      })
+      .catch((error: Error) =>
+        console.log(
+          'Error Sending Remove Members Notification: ',
+          error?.message,
+        ),
+      );
   }
 
   async updateProject(

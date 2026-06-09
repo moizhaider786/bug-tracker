@@ -20,7 +20,6 @@ export class ProjectService {
   }
 
   getProjects(): Observable<Project[]> {
-    console.log('yes comeon');
     return this.http.get<Project[]>(this.baseUrl).pipe(
       tap((projects) => {
         this.userProjects.set(projects);

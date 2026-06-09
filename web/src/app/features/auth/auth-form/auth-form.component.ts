@@ -38,7 +38,6 @@ export class AuthFormComponent {
   onSubmit() {
     if (this.submitted()) return;
     this.submitted.set(true);
-    console.log('clicked');
     if (this.isSignupForm()) {
       const { confirmPassword, ...signupData } = this.formData;
       this.authService.signup(signupData as SignupDto).subscribe({

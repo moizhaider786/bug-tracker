@@ -9,7 +9,7 @@ import { UserRoles } from 'src/types';
 import { Projects } from 'src/project/project.entity';
 import { ProjectsToUsers } from 'src/project/project-to-user.entity';
 import { Bugs } from 'src/bug/bug.entity';
-import { NotificationsToUsers } from 'src/notification/notification-to-user..entity';
+import { NotificationsToUsers } from 'src/notification/notification-to-user.entity';
 
 @Entity()
 export class Users {

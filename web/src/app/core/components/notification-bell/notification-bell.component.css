@@ -1,0 +1,105 @@
+.notification-container {
+  position: relative;
+  display: inline-block;
+}
+
+.bell-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  padding: 8px;
+  border-radius: 50%;
+  color: #333;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bell-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 300px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  margin-top: 8px;
+  z-index: 1000;
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.dropdown-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  background-color: #fafafa;
+}
+
+.dropdown-header h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.dropdown-body {
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.empty-state {
+  padding: 24px;
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+}
+
+.notification-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f5f5f5;
+  transition: background-color 0.2s;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item:hover {
+  background-color: #f9f9f9;
+}
+
+.notif-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: #222;
+  margin-bottom: 4px;
+}
+
+.notif-desc {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.notif-time {
+  font-size: 11px;
+  color: #aaa;
+}

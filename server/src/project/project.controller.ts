@@ -20,7 +20,9 @@ import { MembersDto } from './dto/members.dto';
 
 @Controller('project')
 export class ProjectController {
-  constructor(private readonly projectService: ProjectService) {}
+  constructor(
+    private readonly projectService: ProjectService,
+  ) {}
 
   @Post()
   @Roles(UserRoles.MANAGER)
