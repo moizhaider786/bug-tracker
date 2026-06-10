@@ -5,6 +5,7 @@ import {
   OnChanges,
   SimpleChanges,
   signal,
+  OnInit,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -20,18 +21,23 @@ import { UserRoles } from '../../../types/types';
   templateUrl: './bug-list.component.html',
   styleUrl: './bug-list.component.css',
 })
-export class BugListComponent implements OnChanges {
+export class BugListComponent implements OnChanges, OnInit {
   bugService = inject(BugService);
   authService = inject(AuthService);
-
-  projectId = input.required<number>();
+  preloadedBugs = input<Bug[] | null>(null);
+  projectId = input<number>(0);
 
   bugs = signal<Bug[]>([]);
   isQA = this.authService.hasRole(UserRoles.QA);
   isDev = this.authService.hasRole(UserRoles.DEVELOPER);
-
-
+  ngOnInit(): void {
+    const preloaded = this.preloadedBugs();
+    if (preloaded !== null) {
+      this.bugs.set(preloaded);
+    }
+  }
   ngOnChanges(changes: SimpleChanges): void {
+    if (this.preloadedBugs() !== null) return;
     if (changes['projectId'] && this.projectId()) {
       this.loadBugs();
     }
@@ -40,17 +46,21 @@ export class BugListComponent implements OnChanges {
   loadBugs(): void {
     this.bugService.getBugs(this.projectId()).subscribe({
       next: (bugs) => this.bugs.set(bugs),
-      error: (err) =>
-        alert('Error loading bugs: ' + (err.error?.message || err.message)),
+      error: (err) => alert('Error loading bugs: ' + (err.error?.message || err.message)),
     });
   }
 
   deleteBug(bugId: number): void {
     if (!confirm('Are you sure you want to delete this bug?')) return;
     this.bugService.deleteBug(bugId).subscribe({
-      next: () => this.loadBugs(),
-      error: (err) =>
-        alert('Error deleting bug: ' + (err.error?.message || err.message)),
+      next: () => {
+        if (this.preloadedBugs() !== null) {
+          this.bugs.update((list) => list.filter((b) => b.id !== bugId));
+        } else {
+          this.loadBugs();
+        }
+      },
+      error: (err) => alert('Error deleting bug: ' + (err.error?.message || err.message)),
     });
   }
 }
