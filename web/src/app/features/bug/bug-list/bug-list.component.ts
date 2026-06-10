@@ -13,6 +13,7 @@ import { BugService } from '../../../core/services/bug.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Bug } from '../../../core/models/bug.model';
 import { UserRoles } from '../../../types/types';
+import { ModalService } from '../../../core/services/modal.service';
 
 @Component({
   selector: 'app-bug-list',
@@ -24,6 +25,7 @@ import { UserRoles } from '../../../types/types';
 export class BugListComponent implements OnChanges, OnInit {
   bugService = inject(BugService);
   authService = inject(AuthService);
+  modalService = inject(ModalService);
   preloadedBugs = input<Bug[] | null>(null);
   projectId = input<number>(0);
 
@@ -46,7 +48,7 @@ export class BugListComponent implements OnChanges, OnInit {
   loadBugs(): void {
     this.bugService.getBugs(this.projectId()).subscribe({
       next: (bugs) => this.bugs.set(bugs),
-      error: (err) => alert('Error loading bugs: ' + (err.error?.message || err.message)),
+      error: (err) => this.modalService.showError('Error loading bugs: ' + (err.error?.message || err.message)),
     });
   }
 
@@ -60,7 +62,7 @@ export class BugListComponent implements OnChanges, OnInit {
           this.loadBugs();
         }
       },
-      error: (err) => alert('Error deleting bug: ' + (err.error?.message || err.message)),
+      error: (err) => this.modalService.showError('Error deleting bug: ' + (err.error?.message || err.message)),
     });
   }
 }

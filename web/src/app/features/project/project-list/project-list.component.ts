@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserRoles } from '../../../types/types';
+import { ModalService } from '../../../core/services/modal.service';
 
 @Component({
   selector: 'app-project-list',
@@ -18,11 +19,12 @@ export class ProjectListComponent implements OnInit {
   editProject = output<number>();
   projectDetails = output<number>();
   authService = inject(AuthService);
+  modalService = inject(ModalService);
   userRoles = UserRoles
 
   ngOnInit() {
     this.projectService.getProjects().subscribe({
-      error: (err: HttpErrorResponse) => alert(err.error.message || 'Error fetching projects'),
+      error: (err: HttpErrorResponse) => this.modalService.showError(err.error.message || 'Error fetching projects'),
     });
   }
 }

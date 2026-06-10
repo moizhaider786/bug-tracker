@@ -6,6 +6,7 @@ import { filter } from 'rxjs/operators';
 import { OnInit } from '@angular/core';
 import { NonSidebarRoutes } from '../../lib/constants';
 import { SidebarService } from '../services/sidebar.service';
+import { ModalService } from '../services/modal.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -121,6 +122,7 @@ export class SidebarComponent implements OnInit {
   authService = inject(AuthService);
   router = inject(Router);
   sidebarService = inject(SidebarService);
+  modalService = inject(ModalService);
 
   ngOnInit() {
     this.updateSidebar(this.router.url);
@@ -139,8 +141,8 @@ export class SidebarComponent implements OnInit {
 
   logout() {
     this.authService.logout().subscribe({
-      error(error: any) {
-        alert('Error Logging out');
+      error: (error: any) => {
+        this.modalService.showError('Error Logging out');
       },
     });
     this.router.navigate(['/login'], { replaceUrl: true });

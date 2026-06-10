@@ -7,6 +7,7 @@ import {Router} from '@angular/router';
 import { UserRoles } from '../../../types/types';
 import { AuthService } from '../../../core/services/auth.service';
 import { SignupDto } from '../../../core/dtos/auth/signup.dto';
+import { ModalService } from '../../../core/services/modal.service';
 
 interface IAuthForm {
   name: string | null;
@@ -25,6 +26,7 @@ interface IAuthForm {
 export class AuthFormComponent {
   private router = inject(Router);
   authService = inject(AuthService);
+  modalService = inject(ModalService);
   userRoles = Object.values(UserRoles);
   isSignupForm = input<boolean>();
   formData: IAuthForm = {
@@ -42,12 +44,12 @@ export class AuthFormComponent {
       const { confirmPassword, ...signupData } = this.formData;
       this.authService.signup(signupData as SignupDto).subscribe({
         next: (res) => {
-          alert('Signup successful');
+          this.modalService.showSuccess('Signup successful');
           Object.keys(this.formData).forEach((key) => ((this.formData as any)[key] = null));
           this.submitted.set(false);
         },
         error: (error) => {
-          alert(error.error.message || 'Signup Failed');
+          this.modalService.showError(error.error.message || 'Signup Failed');
           this.submitted.set(false);
         },
       });
@@ -55,11 +57,11 @@ export class AuthFormComponent {
       const { email, password } = this.formData;
       this.authService.login({ email, password } as SignupDto).subscribe({
         next: (res) => {
-          alert('Login successful');
+          this.modalService.showSuccess('Login successful');
           this.router.navigate(["/dashboard"])
         },
         error: (error) => {
-          alert(error.error.message || 'Login Failed');
+          this.modalService.showError(error.error.message || 'Login Failed');
           this.submitted.set(false);
         },
       });

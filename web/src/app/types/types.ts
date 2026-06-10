@@ -23,3 +23,8 @@ export enum NotificationTypes {
   UPDATE_BUG = 'UPDATE_BUG',
   DELETE_BUG = 'DELETE_BUG',
 }
+
+export enum ModalType {
+    ERROR, 
+    SUCCESS
+}

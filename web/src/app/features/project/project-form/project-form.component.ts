@@ -4,6 +4,7 @@ import { ProjectService } from '../../../core/services/project.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserRoles } from '../../../types/types';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ModalService } from '../../../core/services/modal.service';
 
 @Component({
   selector: 'app-project-form',
@@ -18,6 +19,7 @@ export class ProjectFormComponent implements OnChanges, OnInit {
   private projectService = inject(ProjectService);
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
+  private modalService = inject(ModalService);
   closeeProjectForm = output<void>()
 
   isAuthorized = signal<boolean>(true);
@@ -43,7 +45,7 @@ export class ProjectFormComponent implements OnChanges, OnInit {
             description: project.description,
           });
         },
-        error: (err) => alert('Failed to load project details: ' + err.message),
+        error: (err) => this.modalService.showError('Failed to load project details: ' + err.message),
       });
     }
   }
@@ -60,14 +62,14 @@ export class ProjectFormComponent implements OnChanges, OnInit {
 
     request$.subscribe({
       next: () => {
-        alert(this.isEditForm() ? 'Project updated successfully!' : 'Project created successfully!');
+        this.modalService.showSuccess(this.isEditForm() ? 'Project updated successfully!' : 'Project created successfully!');
         this.refreshProjectsList();
         this.form.enable();
         this.isSubmitted.set(false);
         this.closeeProjectForm.emit()
       },
       error: (err: HttpErrorResponse) => {
-        alert(err.error.message || 'Failed to save project');
+        this.modalService.showError(err.error.message || 'Failed to save project');
         this.form.enable();
         this.isSubmitted.set(false);
       },
@@ -76,7 +78,7 @@ export class ProjectFormComponent implements OnChanges, OnInit {
 
   private refreshProjectsList(): void {
     this.projectService.getProjects().subscribe({
-      error: (err) => alert('Error refreshing projects list: ' + err.message),
+      error: (err) => this.modalService.showError('Error refreshing projects list: ' + err.message),
     });
   }
 }

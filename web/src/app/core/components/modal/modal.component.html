@@ -1,0 +1,17 @@
+@if (modalService.visible()) {
+  <div class="modal-backdrop" (click)="modalService.close()">
+    <div class="modal-content" [class.success]="modalService.type() === modalType.SUCCESS" [class.error]="modalService.type() === modalType.ERROR" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <p class="title" [class.success-text]="modalService.type() === modalType.SUCCESS" [class.error-text]="modalService.type() === modalType.ERROR">
+          {{ modalService.type() === modalType.SUCCESS ? 'Success' : 'Error' }}
+        </p>
+      </div>
+      <div class="modal-body">
+        <p class="message">{{ modalService.message() }}</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-close" (click)="modalService.close()">Close</button>
+      </div>
+    </div>
+  </div>
+}

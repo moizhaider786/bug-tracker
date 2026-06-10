@@ -7,6 +7,7 @@ import { User } from '../../../core/models/user.model';
 import { UserRoles } from '../../../types/types';
 import { BugListComponent } from '../../bug/bug-list/bug-list.component';
 import { CommonModule } from '@angular/common';
+import { ModalService } from '../../../core/services/modal.service';
 
 @Component({
   selector: 'app-project-detail-page',
@@ -19,6 +20,7 @@ export class ProjectDetailPageComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   projectService = inject(ProjectService);
   authService = inject(AuthService);
+  modalService = inject(ModalService);
 
   project = signal<Project | null>(null);
   projectMembers = signal<User[]>([]);
@@ -35,13 +37,13 @@ export class ProjectDetailPageComponent implements OnInit {
         this.projectService.getProjectDetails(id).subscribe({
           next: (project) => this.project.set(project),
           error: (err) =>
-            alert('Error: ' + (err.error?.message || 'Failed to load project details')),
+            this.modalService.showError('Error: ' + (err.error?.message || 'Failed to load project details')),
         });
 
         this.projectService.getProjectMembers(id).subscribe({
           next: (members) => this.projectMembers.set(members),
           error: (err) =>
-            alert('Error: ' + (err.error?.message || 'Failed to load project members')),
+            this.modalService.showError('Error: ' + (err.error?.message || 'Failed to load project members')),
         });
       },
     });

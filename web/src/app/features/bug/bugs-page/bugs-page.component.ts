@@ -6,6 +6,7 @@ import { BugService } from '../../../core/services/bug.service';
 import { ProjectService } from '../../../core/services/project.service';
 import { Bug } from '../../../core/models/bug.model';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ModalService } from '../../../core/services/modal.service';
 
 @Component({
   selector: 'app-bugs-page',
@@ -17,6 +18,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class BugsPageComponent implements OnInit {
   private bugService = inject(BugService);
   private projectService = inject(ProjectService);
+  private modalService = inject(ModalService);
 
   allBugs = signal<Bug[]>([]);
   selectedProjectId = signal<number | null>(null);
@@ -56,13 +58,13 @@ export class BugsPageComponent implements OnInit {
   ngOnInit(): void {
     this.bugService.getBugs().subscribe({
       next: (bugs) => this.allBugs.set(bugs),
-      error: (err) => alert('Failed to load bugs: ' + (err.error?.message || err.message)),
+      error: (err) => this.modalService.showError('Failed to load bugs: ' + (err.error?.message || err.message)),
     });
 
     if (!this.projectService.userProjects().length) {
       this.projectService.getProjects().subscribe({
         error: (error: HttpErrorResponse) => {
-          alert(error.error.message || 'Failed to load projects');
+          this.modalService.showError(error.error.message || 'Failed to load projects');
         },
       });
     }

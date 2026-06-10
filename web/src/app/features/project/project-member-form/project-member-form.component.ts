@@ -16,6 +16,7 @@ import { UserRoles } from '../../../types/types';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
+import { ModalService } from '../../../core/services/modal.service';
 
 @Component({
   selector: 'app-project-member-form',
@@ -28,6 +29,7 @@ export class ProjectMemberFormComponent implements OnChanges, OnInit {
   private userService = inject(UserService);
   private projectService = inject(ProjectService);
   router = inject(Router);
+  modalService = inject(ModalService);
 
   isAddForm = input.required<boolean>();
   projectId = input.required<number>();
@@ -85,7 +87,7 @@ export class ProjectMemberFormComponent implements OnChanges, OnInit {
   onSubmit() {
     if (this.isSubmitted()) return;
     const selectedIds = this.selectedUsers().map((u) => u.id);
-    if (selectedIds.length === 0) return alert('Please select at least one user');
+    if (selectedIds.length === 0) return this.modalService.showError('Please select at least one user');
 
     this.isSubmitted.set(true);
 
@@ -95,11 +97,11 @@ export class ProjectMemberFormComponent implements OnChanges, OnInit {
 
     action.pipe(finalize(() => this.isSubmitted.set(false))).subscribe({
       next: () => {
-        alert(this.isAddForm() ? 'Members added successfully' : 'Members removed successfully');
+        this.modalService.showSuccess(this.isAddForm() ? 'Members added successfully' : 'Members removed successfully');
         this.router.navigate(['/projects']);
       },
       error: (error: HttpErrorResponse) => {
-        alert(error.error?.message || (this.isAddForm() ? 'Error adding members' : 'Error removing members'));
+        this.modalService.showError(error.error?.message || (this.isAddForm() ? 'Error adding members' : 'Error removing members'));
       },
     });
   }
