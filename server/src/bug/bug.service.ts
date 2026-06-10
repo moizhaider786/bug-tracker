@@ -53,7 +53,10 @@ export class BugService {
           users: [newBug.developerId],
         })
         .catch((error: Error) =>
-          console.log('Error Sending Bug Creation Notification: ', error?.message),
+          console.log(
+            'Error Sending Bug Creation Notification: ',
+            error?.message,
+          ),
         );
 
       return newBug;
@@ -101,7 +104,10 @@ export class BugService {
             users: [updatedBug.createdBy],
           })
           .catch((error: Error) =>
-            console.log('Error Sending Bug Update Notification: ', error?.message),
+            console.log(
+              'Error Sending Bug Update Notification: ',
+              error?.message,
+            ),
           );
 
         return updatedBug;
@@ -123,7 +129,10 @@ export class BugService {
             users: [updatedBug.developerId],
           })
           .catch((error: Error) =>
-            console.log('Error Sending Bug Update Notification: ', error?.message),
+            console.log(
+              'Error Sending Bug Update Notification: ',
+              error?.message,
+            ),
           );
 
         return updatedBug;
@@ -150,6 +159,11 @@ export class BugService {
         },
         relations: { bugs: true },
         select: { bugs: true },
+        order: {
+          bugs: {
+            createdAt: 'DESC',
+          },
+        },
       });
 
       return projects.flatMap((project) => project.bugs);
@@ -159,12 +173,18 @@ export class BugService {
           createdBy: userId,
           ...(projectId && { projectId }),
         },
+        order: {
+          createdAt: 'DESC',
+        },
       });
     } else if (role === UserRoles.DEVELOPER) {
       return await this.bugsRepo.find({
         where: {
           developerId: userId,
           ...(projectId && { projectId }),
+        },
+        order: {
+          createdAt: 'DESC',
         },
       });
     }

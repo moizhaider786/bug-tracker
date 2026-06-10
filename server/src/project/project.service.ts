@@ -56,13 +56,21 @@ export class ProjectService {
   }
 
   async getUserProjects(userId: number, role: UserRoles) {
-    let projects: any[];
+    let projects: Projects[];
     if (role === UserRoles.MANAGER) {
-      projects = await this.projectRepo.find({ where: { createdBy: userId } });
+      projects = await this.projectRepo.find({
+        where: { createdBy: userId },
+        order: { createdAt: 'DESC' },
+      });
     } else {
       const userProjects = await this.projectsToUsersRepo.find({
         where: { userId: userId },
         relations: { project: true },
+        order: {
+          project: {
+            createdAt: "DESC"
+          }
+        }
       });
 
       projects = userProjects.map((up) => ({
@@ -154,7 +162,8 @@ export class ProjectService {
   ) {
     try {
       const project = await this.projectRepo.findOne({
-        where: { id: projectId }, relations: { projectUsers: true },
+        where: { id: projectId },
+        relations: { projectUsers: true },
       });
       if (!project) throw new NotFoundException('Project not found');
       if (project.createdBy !== reqUserId)
