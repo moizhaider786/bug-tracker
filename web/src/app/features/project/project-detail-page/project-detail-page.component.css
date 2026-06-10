@@ -2,67 +2,125 @@
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
-.project-info h2 {
-  margin: 0.25rem 0;
-  color: var(--color-text);
+.project-info,
+.members-section,
+.bugs-section {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+}
+
+.project-info {
+  border-left: 3px solid var(--color-primary);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
 }
 
 .created-at {
-  font-size: 0.85em;
+  font-size: 12px;
   color: var(--color-text-light);
-  margin: 0 0 0.25rem;
+  margin: 0 0 6px;
+}
+
+.project-info h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 6px;
+}
+
+.project-description {
+  font-size: 14px;
+  color: var(--color-text-light);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.section-header,
+.bugs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .members-section h3,
-.bugs-section h3 {
-  margin: 0 0 0.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-text);
+.bugs-header h3 {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-light);
+  margin: 0;
 }
 
+/* Member list */
 .member-list {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 6px;
 }
 
 .member-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-}
-
-.role-badge {
-  font-size: 0.75em;
-  padding: 4px 8px;
+  gap: 10px;
+  padding: 8px 10px;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  font-weight: 500;
 }
 
-.bugs-header {
+.member-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #dbeafe;
+  color: var(--color-primary);
+  font-size: 10px;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: 0.5rem;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.03em;
 }
 
-.bugs-header h3 {
-  margin: 0;
-  border-bottom: none;
-  padding-bottom: 0;
+.member-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+  flex: 1;
 }
+
+.role-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 500;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  color: var(--color-text-light);
+  white-space: nowrap;
+}
+
+/* Role-specific tints — all derived from your --color-primary blue family */
+.role-qa         { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+.role-developer  { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+.role-admin      { background: #ede9fe; color: #5b21b6; border-color: #ddd6fe; }
 
 .empty-state {
+  padding: 1.5rem 0;
+  text-align: center;
+  font-size: 13px;
   color: var(--color-text-light);
+  list-style: none;
 }
