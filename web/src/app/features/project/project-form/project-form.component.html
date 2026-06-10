@@ -2,12 +2,7 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="project-form">
     <div class="form-group">
       <label for="name">Project Name:</label>
-      <input
-        class="form-input"
-        type="text"
-        id="name"
-        formControlName="name"
-      />
+      <input class="form-input" type="text" id="name" formControlName="name" />
       @if (form.controls['name'].invalid && form.controls['name'].touched) {
         <div class="error">Project name is required.</div>
       }
@@ -23,8 +18,24 @@
       ></textarea>
     </div>
 
-    <div class="form-actions">
-      <button class="btn-primary" type="submit" [disabled]="form.invalid || form.disabled">
+    <div
+      class="form-actions"
+      style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem"
+    >
+      <button
+        class="btn-secondary"
+        type="button"
+        style="padding-top: 15px; padding-bottom: 15px; font-size: 0.9rem"
+        (click)="closeeProjectForm.emit()"
+      >
+        Cancel
+      </button>
+      <button
+        class="btn-primary with-icon"
+        type="submit"
+        style="padding-top: 15px; padding-bottom: 15px; font-size: 0.9rem"
+        [disabled]="form.invalid || form.disabled"
+      >
         {{ isEditForm() ? 'Update Project' : 'Create Project' }}
       </button>
     </div>

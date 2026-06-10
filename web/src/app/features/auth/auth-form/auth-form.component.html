@@ -96,7 +96,11 @@
     }
   }
 
-  <button class="submit-btn" [disabled]="!authForm.form.valid">
+  <button
+    class="btn-primary"
+    style="width: 100%; margin-top: 1rem; padding-top: 15px; padding-bottom: 15px"
+    [disabled]="!authForm.form.valid"
+  >
     {{ isSignupForm() ? 'Signup' : 'Login' }}
   </button>
 </form>
@@ -104,6 +108,5 @@
   <span>{{ isSignupForm() ? 'Already have an account ' : "Don't have an account " }}</span>
   <a [routerLink]="isSignupForm() ? '/login' : '/signup'">{{
     isSignupForm() ? 'Login' : 'Signup'
-  }}</a
-  >
+  }}</a>
 </div>

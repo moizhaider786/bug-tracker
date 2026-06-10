@@ -2,7 +2,7 @@
 :root {
   --color-primary: #2563eb;
   --color-primary-hover: #1d4ed8;
-  --color-danger: #dc2626;
+  --color-danger: #ea4c4c;
   --color-danger-hover: #b91c1c;
   --color-border: #e5e7eb;
   --color-bg: #f8f9fa;
@@ -27,62 +27,93 @@ body {
 
 /* Button variants */
 .btn-primary {
-  background-color: var(--color-primary);
+  background: linear-gradient(135deg, var(--color-primary), #3b82f6);
   color: white;
-  border: 1px solid var(--color-primary);
+  border: none;
   border-radius: var(--radius);
   padding: 0.5rem 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
 }
 
 .btn-primary:hover {
-  background-color: var(--color-primary-hover);
-  border-color: var(--color-primary-hover);
+  background: linear-gradient(135deg, var(--color-primary-hover), var(--color-primary));
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
-  background-color: white;
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
   color: var(--color-text);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: 0.5rem 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .btn-secondary:hover {
-  background-color: #f3f4f6;
-  border-color: #d1d5db;
+  background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+  border-color: #ced4da;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 .btn-danger {
-  background-color: white;
-  color: var(--color-danger);
-  border: 1px solid var(--color-danger);
+  background: linear-gradient(135deg, var(--color-danger), #ef4444);
+  color: white;
+  border: none;
   border-radius: var(--radius);
   padding: 0.5rem 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
 }
 
 .btn-danger:hover {
-  background-color: var(--color-danger);
-  color: white;
-  border-color: var(--color-danger);
+  background: linear-gradient(135deg, var(--color-danger-hover), var(--color-danger));
+  box-shadow: 0 4px 6px rgba(220, 38, 38, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Icon Button Styles */
+.btn-primary svg, 
+.btn-secondary svg, 
+.btn-danger svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.btn-primary.with-icon, 
+.btn-secondary.with-icon, 
+.btn-danger.with-icon {
+  gap: 0.5rem;
+}
+
+.btn-icon {
+  padding: 0.5rem;
+  border-radius: 50%;
+  aspect-ratio: 1 / 1;
 }

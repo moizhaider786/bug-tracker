@@ -2,16 +2,21 @@
   <div class="header-actions">
     <h1>Projects</h1>
     @if (authService.hasRole(userRole.MANAGER)) {
-      <button class="btn-primary" (click)="openProjectForm(false)">Create Project</button>
+      <button class="btn-primary with-icon" (click)="openProjectForm(false)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        <span>Create Project</span>
+      </button>
     }
   </div>
 
   @if (isProjectFormVisible()) {
     <div class="modal-overlay" (click)="closeProjectForm()">
       <div class="modal-card" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <h2>{{ isEditProjectForm() ? 'Edit Project' : 'Create Project' }}</h2>
-          <button class="btn-close" (click)="closeProjectForm()" aria-label="Close">&#10005;</button>
+        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 1rem; margin-bottom: 1rem;">
+          <h2 style="margin: 0;">{{ isEditProjectForm() ? 'Edit Project' : 'Create Project' }}</h2>
+          <button class="btn-icon" style="background: none; border: none; cursor: pointer; color: var(--color-text-light);" (click)="closeProjectForm()" aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
         <app-project-form
           [isEditForm]="isEditProjectForm()"

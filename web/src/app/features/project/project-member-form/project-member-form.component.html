@@ -36,7 +36,22 @@
               <h4>{{ user.name }}</h4>
               <p>{{ user.email }}</p>
             </div>
-            <button class="remove-btn" type="button">&times;</button>
+            <button class="remove-btn" type="button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
           </div>
         } @empty {
           <p class="empty-state">No users selected.</p>
@@ -45,13 +60,22 @@
     </div>
   </div>
 
-  <div class="form-actions">
-    <button class="btn-secondary" type="button" (click)="router.navigate(['/projects'])">
+  <div
+    class="form-actions"
+    style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem"
+  >
+    <button
+      class="btn-secondary with-icon"
+      type="button"
+      style="padding-top: 15px; padding-bottom: 15px; font-size: 0.9rem"
+      (click)="router.navigate(['/projects'])"
+    >
       Cancel
     </button>
     <button
-      class="btn-primary"
+      class="btn-primary with-icon"
       type="button"
+      style="padding-top: 15px; padding-bottom: 15px; font-size: 0.9rem"
       [disabled]="selectedUsers().length === 0 || isSubmitted()"
       (click)="onSubmit()"
     >

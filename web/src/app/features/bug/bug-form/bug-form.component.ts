@@ -91,7 +91,10 @@ export class BugFormComponent implements OnInit, OnChanges {
 
       this.projectService.getProjectMembers(this.projectId(), UserRoles.DEVELOPER).subscribe({
         next: (users) => this.developers.set(users),
-        error: (err) => this.modalService.showError('Failed to load developers: ' + (err.error?.message || err.message)),
+        error: (err) =>
+          this.modalService.showError(
+            'Failed to load developers: ' + (err.error?.message || err.message),
+          ),
       });
 
       this.form.get('type')!.valueChanges.subscribe((val) => this.formType.set(val));
@@ -122,7 +125,8 @@ export class BugFormComponent implements OnInit, OnChanges {
           }
           this.createdBugId.set(bug.id);
         },
-        error: (err) => this.modalService.showError('Failed to load bug: ' + (err.error?.message || err.message)),
+        error: (err) =>
+          this.modalService.showError('Failed to load bug: ' + (err.error?.message || err.message)),
       });
     }
 
@@ -168,7 +172,9 @@ export class BugFormComponent implements OnInit, OnChanges {
         },
         error: (err) => {
           this.isSubmitting.set(false);
-          this.modalService.showError(err.error?.message || err.message || 'Failed to update bug: ');
+          this.modalService.showError(
+            err.error?.message || err.message || 'Failed to update bug: ',
+          );
         },
       });
       return;
@@ -197,7 +203,9 @@ export class BugFormComponent implements OnInit, OnChanges {
           },
           error: (err) => {
             this.isSubmitting.set(false);
-            this.modalService.showError('Failed to update bug: ' + (err.error?.message || err.message));
+            this.modalService.showError(
+              'Failed to update bug: ' + (err.error?.message || err.message),
+            );
           },
         });
     } else {
@@ -205,11 +213,16 @@ export class BugFormComponent implements OnInit, OnChanges {
         next: (bug) => {
           this.createdBugId.set(bug.id);
           this.isSubmitting.set(false);
-          this.modalService.showSuccess('Bug created successfully! You can now upload a screenshot.');
+          this.form.disable();
+          this.modalService.showSuccess(
+            'Bug created successfully! You can now upload a screenshot.',
+          );
         },
         error: (err) => {
           this.isSubmitting.set(false);
-          this.modalService.showError('Failed to create bug: ' + (err.error?.message || err.message));
+          this.modalService.showError(
+            'Failed to create bug: ' + (err.error?.message || err.message),
+          );
         },
       });
     }
@@ -226,7 +239,9 @@ export class BugFormComponent implements OnInit, OnChanges {
         },
         error: (err) => {
           this.isSubmitting.set(false);
-          this.modalService.showError('Bug saved but screenshot upload failed: ' + (err.error?.message || err.message));
+          this.modalService.showError(
+            'Bug saved but screenshot upload failed: ' + (err.error?.message || err.message),
+          );
           this.navigateBack();
         },
       });

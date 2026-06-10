@@ -38,7 +38,10 @@ import { ModalService } from '../services/modal.service';
           </ul>
         </nav>
         <div class="sidebar-footer">
-          <button (click)="logout()" class="logout-btn">Logout</button>
+          <button (click)="logout()" class="logout-btn btn-secondary with-icon" style="background: transparent; border-color: #4b5563; color: #d1d5db; justify-content: flex-start; width: 100%;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+            <span>Logout</span>
+          </button>
         </div>
       </div>
     }

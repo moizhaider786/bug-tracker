@@ -3,27 +3,61 @@
     @for (bug of bugs(); track bug.id) {
       <div class="bug-card">
         <div class="bug-header">
-          <span class="bug-type-badge">{{ bug.type }}</span>
-          <span class="bug-status-badge status-{{ bug.status.toLowerCase() }}">
-            {{ bug.status }}
-          </span>
+          <div>
+            <span class="bug-type-badge">{{ bug.type }}</span>
+            <span class="bug-status-badge status-{{ bug.status.toLowerCase() }}">
+              {{ bug.status }}
+            </span>
+          </div>
+          @if (isQA || isDev) {
+            <div class="bug-actions">
+              <a
+                class="btn-secondary btn-icon"
+                title="Edit Bug"
+                [routerLink]="['/projects', projectId(), 'bugs', bug.id, 'edit']"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                </svg>
+              </a>
+              @if (isQA) {
+                <button
+                  class="btn-danger btn-icon"
+                  title="Delete Bug"
+                  type="button"
+                  (click)="deleteBug(bug.id)"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path
+                      d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"
+                    />
+                  </svg>
+                </button>
+              }
+            </div>
+          }
         </div>
-        <h4 class="bug-title"><a [routerLink]="['/bugs', bug.id]">{{ bug.title }}</a></h4>
+        <h4 class="bug-title">
+          <a [routerLink]="['/bugs', bug.id]" class="bug-link">
+            <span>{{ bug.title }}</span>
+
+            <svg
+              class="external-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                d="M19.98 2.99H15a1 1 0 100 2h2.59L8.29 14.29a1 1 0 101.42 1.42L19 6.41V9a1 1 0 102 0V4.13a1 1 0 00-1.02-1.14zM5 3a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-6a1 1 0 10-2 0v6H5V5h6a1 1 0 100-2H5z"
+              />
+            </svg>
+          </a>
+        </h4>
         <p class="bug-description">{{ bug.description }}</p>
         <div class="bug-footer">
           <span class="bug-deadline">
             {{ bug.deadline ? (bug.deadline | date: 'mediumDate') : 'No deadline' }}
           </span>
-          @if (isQA || isDev) {
-            <div class="bug-actions">
-              <a class="btn-secondary" [routerLink]="['/projects', projectId(), 'bugs', bug.id, 'edit']"
-                >Edit</a
-              >
-              @if (isQA) {
-                <button class="btn-danger" type="button" (click)="deleteBug(bug.id)">Delete</button>
-              }
-            </div>
-          }
         </div>
         @if (bug.screenShotUrl) {
           <span>
