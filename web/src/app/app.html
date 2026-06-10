@@ -1,5 +1,5 @@
 <div class="app-layout">
-  @if (authService.isAuthenticated()) {
+  @if (authService.isAuthenticated() && sidebarService.get()) {
     <header class="top-bar">
       <app-notification-bell></app-notification-bell>
     </header>

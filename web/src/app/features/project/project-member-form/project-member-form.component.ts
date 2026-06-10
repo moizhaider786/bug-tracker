@@ -8,11 +8,11 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../core/services/user.service';
 import { ProjectService } from '../../../core/services/project.service';
 import { User } from '../../../core/models/user.model';
 import { UserRoles } from '../../../types/types';
-import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
@@ -20,13 +20,13 @@ import { finalize } from 'rxjs';
 @Component({
   selector: 'app-project-member-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [FormsModule],
   templateUrl: './project-member-form.component.html',
   styleUrl: './project-member-form.component.css',
 })
 export class ProjectMemberFormComponent implements OnChanges, OnInit {
-  userService = inject(UserService);
-  projectService = inject(ProjectService);
+  private userService = inject(UserService);
+  private projectService = inject(ProjectService);
   router = inject(Router);
 
   isAddForm = input.required<boolean>();
@@ -34,10 +34,9 @@ export class ProjectMemberFormComponent implements OnChanges, OnInit {
 
   allUsers = signal<User[]>([]);
   projectMembers = signal<User[]>([]);
-  searchControl = new FormControl('');
   selectedUsers = signal<User[]>([]);
-
   isSubmitted = signal<boolean>(false);
+  searchQuery = signal('');
 
   ngOnInit() {
     this.userService.getAllUsers([UserRoles.DEVELOPER, UserRoles.QA]).subscribe({
@@ -54,21 +53,24 @@ export class ProjectMemberFormComponent implements OnChanges, OnInit {
   }
 
   availableUsers = computed(() => {
-    const search = this.searchControl.value?.toLowerCase() || '';
-    const members = this.projectMembers();
-    const membersIds = new Set(members.map((m) => m.id));
-    const all = this.allUsers();
-
-    let baseList = this.isAddForm() ? all.filter((u) => !membersIds.has(u.id)) : members;
-
+    const search = this.searchQuery().toLowerCase().trim();
+    const memberIds = new Set(this.projectMembers().map((m) => m.id));
     const selectedIds = new Set(this.selectedUsers().map((u) => u.id));
+
+    let baseList = this.isAddForm()
+      ? this.allUsers().filter((u) => !memberIds.has(u.id))
+      : this.projectMembers();
+
     baseList = baseList.filter((u) => !selectedIds.has(u.id));
 
     if (search) {
       baseList = baseList.filter(
-        (u) => u.name.toLowerCase().includes(search) || u.email.toLowerCase().includes(search),
+        (u) =>
+          u.name.toLowerCase().includes(search) ||
+          u.email.toLowerCase().includes(search),
       );
     }
+
     return baseList;
   });
 
@@ -82,9 +84,10 @@ export class ProjectMemberFormComponent implements OnChanges, OnInit {
 
   onSubmit() {
     if (this.isSubmitted()) return;
-    this.isSubmitted.set(true);
     const selectedIds = this.selectedUsers().map((u) => u.id);
     if (selectedIds.length === 0) return alert('Please select at least one user');
+
+    this.isSubmitted.set(true);
 
     const action = this.isAddForm()
       ? this.projectService.addMembers(this.projectId(), selectedIds)
@@ -92,15 +95,11 @@ export class ProjectMemberFormComponent implements OnChanges, OnInit {
 
     action.pipe(finalize(() => this.isSubmitted.set(false))).subscribe({
       next: () => {
-        alert(this.isAddForm() ? 'Members added Successfully' : 'Members removed Successfully');
+        alert(this.isAddForm() ? 'Members added successfully' : 'Members removed successfully');
         this.router.navigate(['/projects']);
       },
       error: (error: HttpErrorResponse) => {
-        alert(
-          error.error.message || this.isAddForm()
-            ? 'Error adding members'
-            : 'Error removing members',
-        );
+        alert(error.error?.message || (this.isAddForm() ? 'Error adding members' : 'Error removing members'));
       },
     });
   }

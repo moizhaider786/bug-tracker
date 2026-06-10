@@ -2,7 +2,8 @@
   <div class="search-section">
     <input
       type="text"
-      [formControl]="searchControl"
+      [ngModel]="searchQuery()"
+      (ngModelChange)="searchQuery.set($event)"
       placeholder="Search users by name or email..."
       class="search-input"
     />
@@ -45,19 +46,14 @@
   </div>
 
   <div class="form-actions">
-    <button
-      class="btn-secondary"
-      routerLink="/projects"
-      type="button"
-      (click)="router.navigate(['/projects'])"
-    >
+    <button class="btn-secondary" type="button" (click)="router.navigate(['/projects'])">
       Cancel
     </button>
     <button
       class="btn-primary"
-      [disabled]="selectedUsers().length === 0"
-      (click)="onSubmit()"
       type="button"
+      [disabled]="selectedUsers().length === 0 || isSubmitted()"
+      (click)="onSubmit()"
     >
       {{ isAddForm() ? 'Add Members' : 'Remove Members' }}
     </button>
