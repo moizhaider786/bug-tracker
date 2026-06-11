@@ -20,9 +20,7 @@ import { MembersDto } from './dto/members.dto';
 
 @Controller('project')
 export class ProjectController {
-  constructor(
-    private readonly projectService: ProjectService,
-  ) {}
+  constructor(private readonly projectService: ProjectService) {}
 
   @Post()
   @Roles(UserRoles.MANAGER)
@@ -35,10 +33,16 @@ export class ProjectController {
   }
 
   @Get()
-  async getProjects(@Req() req: Request) {
+  async getProjects(
+    @Req() req: Request,
+    @Query('page') page = 1,
+    @Query('pageSize') pageSize = 10,
+  ) {
     return await this.projectService.getUserProjects(
       req.user!.id,
       req.user!.role,
+      page,
+      pageSize
     );
   }
 

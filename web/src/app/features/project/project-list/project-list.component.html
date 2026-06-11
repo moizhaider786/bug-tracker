@@ -8,24 +8,55 @@
       <div class="project-actions">
         <a [routerLink]="['/projects', project.id]" class="btn-primary with-icon">
           <span>Details</span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
         </a>
         @if (authService.hasRole(userRoles.MANAGER)) {
           <div class="manager-actions">
-            <button (click)="editProject.emit(project.id)" class="btn-secondary btn-icon" title="Edit Project">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            <button
+              (click)="editProject.emit(project.id)"
+              class="btn-secondary btn-icon"
+              title="Edit Project"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+              </svg>
             </button>
-            <a [routerLink]="['/projects', project.id, 'add-members']" class="btn-secondary btn-icon" title="Add Members">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            <a
+              [routerLink]="['/projects', project.id, 'add-members']"
+              class="btn-secondary btn-icon"
+              title="Add Members"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="8.5" cy="7" r="4" />
+                <line x1="20" y1="8" x2="20" y2="14" />
+                <line x1="23" y1="11" x2="17" y2="11" />
+              </svg>
             </a>
-            <a [routerLink]="['/projects', project.id, 'remove-members']" class="btn-danger btn-icon" title="Remove Members">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            <a
+              [routerLink]="['/projects', project.id, 'remove-members']"
+              class="btn-danger btn-icon"
+              title="Remove Members"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="8.5" cy="7" r="4" />
+                <line x1="23" y1="11" x2="17" y2="11" />
+              </svg>
             </a>
           </div>
         }
       </div>
     </div>
   } @empty {
-    <p>No projects found.</p>
+    <p class="empty-msg">No projects found.</p>
   }
+  <app-pagination
+    [total]="projectService.totalProjects()"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    (pageChange)="onPageChange($event)"
+  />
 </div>

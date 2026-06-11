@@ -38,3 +38,9 @@
   display: flex;
   gap: 0.5rem;
 }
+
+.empty-msg {
+  color: var(--color-text-light);
+  text-align: center;
+  padding: 2rem 0;
+}

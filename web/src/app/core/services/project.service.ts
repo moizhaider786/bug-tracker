@@ -7,22 +7,34 @@ import { environment } from '../../../environments/environment';
 import { Project, MemberProject } from '../models/project.model';
 import { User } from '../models/user.model';
 import { UserRoles } from '../../types/types';
+import { PaginatedResponse } from '../../types/types';
+import { DEFAULT_PAGE_SIZE } from '../../lib/constants';
 @Injectable({
   providedIn: 'root',
 })
 export class ProjectService {
   private baseUrl = `${environment.apiUrl}/project`;
   userProjects = signal<Project[]>([]);
+  totalProjects = signal<number>(0);
+
   constructor(private http: HttpClient) {}
 
   createProject(data: ProjectDto): Observable<Project> {
     return this.http.post<Project>(this.baseUrl, data);
   }
 
-  getProjects(): Observable<Project[]> {
-    return this.http.get<Project[]>(this.baseUrl).pipe(
-      tap((projects) => {
-        this.userProjects.set(projects);
+  getProjects(
+    page: number = 1,
+    pageSize: number = DEFAULT_PAGE_SIZE,
+  ): Observable<PaginatedResponse<Project>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<PaginatedResponse<Project>>(this.baseUrl, { params }).pipe(
+      tap((response) => {
+        this.userProjects.set(response.data);
+        this.totalProjects.set(response.total);
       }),
     );
   }

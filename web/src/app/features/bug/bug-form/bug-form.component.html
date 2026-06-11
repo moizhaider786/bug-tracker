@@ -12,6 +12,7 @@
 
       <div class="form-group">
         <p>Time Spent</p>
+        <label for="hours">Hours</label>
         <input id="hours" type="number" formControlName="hours" />
         @if (form.get('hours')?.errors?.['min'] && form.get('hours')?.touched) {
           <div class="error">Hours cannot be negative.</div>

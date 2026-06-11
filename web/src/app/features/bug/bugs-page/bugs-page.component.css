@@ -1,9 +1,12 @@
+/* Container */
 .bugs-page-container {
   padding: 2rem;
   max-width: 1000px;
   margin: 0 auto;
+  font-family: 'Inter', sans-serif;
 }
 
+/* Header */
 .header-section {
   display: flex;
   justify-content: space-between;
@@ -15,40 +18,72 @@
 
 .header-section h1 {
   margin: 0;
-  color: #333;
+  color: #222;
+  font-size: 1.75rem;
+  font-weight: 600;
 }
 
+/* Filter Group */
 .filter-group {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .filter-group label {
   font-weight: 500;
   color: #555;
+  white-space: nowrap;
 }
 
+/* Updated select styling */
 .filter-group select {
-  padding: 0.5rem;
-  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
   border: 1px solid #ccc;
-  min-width: 200px;
-  font-size: 1rem;
+  min-width: 220px;
+  font-size: 0.95rem;
+  color: #333;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
+.filter-group select:hover {
+  border-color: #888;
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: #0056b3;
+  box-shadow: 0 0 0 2px rgba(0,86,179,0.2);
+}
+
+/* Option hover/focus (browser dependent) */
+.filter-group select option:hover {
+  background-color: #f0f4f8;
+}
+
+/* Projects list */
 .projects-list {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
+/* Collapsible project card */
 .project-bugs-collapsible {
   background: #fff;
   border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.project-bugs-collapsible:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .project-summary {
@@ -60,10 +95,12 @@
   gap: 1rem;
   border-bottom: 1px solid transparent;
   user-select: none;
+  transition: background 0.2s ease;
 }
 
 .project-bugs-collapsible[open] .project-summary {
   border-bottom-color: #ddd;
+  background-color: #e9f0ff;
 }
 
 .project-summary h2 {
@@ -86,4 +123,16 @@
   color: #888;
   padding: 2rem;
   font-style: italic;
+}
+
+/* Responsive tweaks */
+@media (max-width: 500px) {
+  .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .filter-group select {
+    min-width: 100%;
+  }
 }

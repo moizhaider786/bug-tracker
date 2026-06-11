@@ -55,31 +55,45 @@ export class ProjectService {
     }
   }
 
-  async getUserProjects(userId: number, role: UserRoles) {
+  async getUserProjects(
+    userId: number,
+    role: UserRoles,
+    page: number,
+    pageSize: number,
+  ) {
     let projects: Projects[];
+    let total: number;
+
     if (role === UserRoles.MANAGER) {
-      projects = await this.projectRepo.find({
+      [projects, total] = await this.projectRepo.findAndCount({
         where: { createdBy: userId },
         order: { createdAt: 'DESC' },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
       });
     } else {
-      const userProjects = await this.projectsToUsersRepo.find({
-        where: { userId: userId },
-        relations: { project: true },
-        order: {
-          project: {
-            createdAt: "DESC"
-          }
-        }
-      });
+      const [userProjects, count] = await this.projectsToUsersRepo.findAndCount(
+        {
+          where: { userId: userId },
+          relations: { project: true },
+          order: {
+            project: {
+              createdAt: 'DESC',
+            },
+          },
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+        },
+      );
 
       projects = userProjects.map((up) => ({
         assignedAt: up.assignedAt,
         ...up.project,
       }));
+      total = count;
     }
     if (!projects?.length) throw new NotFoundException('No projects found');
-    return projects;
+    return { data: projects, total };
   }
 
   async addMembers(projectId: number, reqUserId: number, members: number[]) {

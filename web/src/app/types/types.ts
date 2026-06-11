@@ -28,3 +28,8 @@ export enum ModalType {
     ERROR, 
     SUCCESS
 }
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+}

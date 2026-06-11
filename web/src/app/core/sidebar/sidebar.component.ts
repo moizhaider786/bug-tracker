@@ -106,7 +106,7 @@ import { ModalService } from '../services/modal.service';
         color: white;
       }
       .sidebar-nav a.active {
-        background-color: #2563eb;
+        background-color: var(--color-primary);
         color: white;
         font-weight: 500;
       }
