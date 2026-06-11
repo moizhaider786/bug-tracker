@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 import { SignupDto } from '../dtos/auth/signup.dto';
 import { LoginDto } from '../dtos/auth/login.dto';
 import { User } from '../models/user.model';
+import { UserRoles } from '../../types/types';
 
 @Injectable({
   providedIn: 'root',
@@ -48,8 +49,11 @@ export class AuthService {
   getToken(): string | null {
     return localStorage.getItem('access_token');
   }
-  getUser(): string | null {
-    return localStorage.getItem('user');
+  getUser(): { id: number; role: UserRoles } | null {
+    const user = localStorage.getItem('user');
+    if (!user) return null;
+    const parsedUser = JSON.parse(user);
+    return parsedUser;
   }
   isAuthenticated(): boolean {
     return !!this.getToken() && !!this.getUser();
@@ -57,7 +61,6 @@ export class AuthService {
   hasRole(role: string): boolean {
     const user = this.getUser();
     if (!user) return false;
-    const parsedUser = JSON.parse(user);
-    return role === parsedUser.role;
+    return role === user.role;
   }
 }

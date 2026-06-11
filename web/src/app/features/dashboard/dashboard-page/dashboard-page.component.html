@@ -1,3 +1,425 @@
-<div class="page-container">
-  <h1>Welcome to Bug Tracker</h1>
+<div class="page">
+  <header class="header">
+    <h1>Dashboard</h1>
+    <span class="badge" [class]="'badge--' + role.toLowerCase()">{{ role }}</span>
+  </header>
+
+  @if (stats(); as s) {
+    <!-- MANAGER -->
+    @if (role === UserRoles.MANAGER) {
+      <div class="grid">
+        <div class="card">
+          <div class="icon icon-project">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 7h18M3 12h18M3 17h18" />
+            </svg>
+          </div>
+          <span class="label">Projects Created</span>
+          <span class="value">{{ s.createdProjectsCount }}</span>
+        </div>
+
+        <div class="card">
+          <div class="icon icon-bug">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83" />
+            </svg>
+          </div>
+          <span class="label">Bugs in Projects</span>
+          <span class="value">{{
+            (s.bugsInCreatedProjects?.bugCount ?? 0) + (s.bugsInCreatedProjects?.featureCount ?? 0)
+          }}</span>
+          <div class="breakdown">
+            <div class="row row-bug">
+              <span>Bugs</span>
+              <span>{{ s.bugsInCreatedProjects?.bugCount ?? 0 }}</span>
+            </div>
+            <div class="row row-feature">
+              <span>Features</span>
+              <span>{{ s.bugsInCreatedProjects?.featureCount ?? 0 }}</span>
+            </div>
+          </div>
+        </div>
+
+        @if (s.statusBreakdown; as sb) {
+          <div class="card">
+            <span class="label">Bug Status</span>
+            <span class="value">{{ sb.bugs.new + sb.bugs.started + sb.bugs.resolved }}</span>
+            <div class="status-bars">
+              <div class="status-row">
+                <span class="status-label">New</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-new"
+                    [style.width.%]="
+                      getPercent(sb.bugs.new, sb.bugs.new + sb.bugs.started + sb.bugs.resolved)
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.bugs.new }}</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">In Progress</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-progress"
+                    [style.width.%]="
+                      getPercent(sb.bugs.started, sb.bugs.new + sb.bugs.started + sb.bugs.resolved)
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.bugs.started }}</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Resolved</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-resolved"
+                    [style.width.%]="
+                      getPercent(sb.bugs.resolved, sb.bugs.new + sb.bugs.started + sb.bugs.resolved)
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.bugs.resolved }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="label">Feature Status</span>
+            <span class="value">{{
+              sb.features.new + sb.features.started + sb.features.resolved
+            }}</span>
+            <div class="status-bars">
+              <div class="status-row">
+                <span class="status-label">New</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-new"
+                    [style.width.%]="
+                      getPercent(
+                        sb.features.new,
+                        sb.features.new + sb.features.started + sb.features.resolved
+                      )
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.features.new }}</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">In Progress</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-progress"
+                    [style.width.%]="
+                      getPercent(
+                        sb.features.started,
+                        sb.features.new + sb.features.started + sb.features.resolved
+                      )
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.features.started }}</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Resolved</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-resolved"
+                    [style.width.%]="
+                      getPercent(
+                        sb.features.resolved,
+                        sb.features.new + sb.features.started + sb.features.resolved
+                      )
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.features.resolved }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- DEVELOPER -->
+    @if (role === UserRoles.DEVELOPER) {
+      <div class="grid">
+        <div class="card">
+          <div class="icon icon-project">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+          </div>
+          <span class="label">Assigned Projects</span>
+          <span class="value">{{ s.assignedProjectsCount }}</span>
+        </div>
+
+        <div class="card">
+          <div class="icon icon-bug">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22c4.97 0 9-4.03 9-9H3c0 4.97 4.03 9 9 9z" />
+              <path d="M12 2a5 5 0 0 0-5 5h10a5 5 0 0 0-5-5z" />
+            </svg>
+          </div>
+          <span class="label">Assigned Issues</span>
+          <span class="value">{{
+            (s.assignedBugs?.bugCount ?? 0) + (s.assignedBugs?.featureCount ?? 0)
+          }}</span>
+          <div class="breakdown">
+            <div class="row row-bug">
+              <span>Bugs</span>
+              <span>{{ s.assignedBugs?.bugCount ?? 0 }}</span>
+            </div>
+            <div class="row row-feature">
+              <span>Features</span>
+              <span>{{ s.assignedBugs?.featureCount ?? 0 }}</span>
+            </div>
+          </div>
+        </div>
+
+        @if (s.statusBreakdown; as sb) {
+          <div class="card">
+            <span class="label">Bug Status</span>
+            <span class="value">{{ sb.bugs.new + sb.bugs.started + sb.bugs.resolved }}</span>
+            <div class="status-bars">
+              <div class="status-row">
+                <span class="status-label">New</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-new"
+                    [style.width.%]="
+                      getPercent(sb.bugs.new, sb.bugs.new + sb.bugs.started + sb.bugs.resolved)
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.bugs.new }}</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">In Progress</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-progress"
+                    [style.width.%]="
+                      getPercent(sb.bugs.started, sb.bugs.new + sb.bugs.started + sb.bugs.resolved)
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.bugs.started }}</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Resolved</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-resolved"
+                    [style.width.%]="
+                      getPercent(sb.bugs.resolved, sb.bugs.new + sb.bugs.started + sb.bugs.resolved)
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.bugs.resolved }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="label">Feature Status</span>
+            <span class="value">{{
+              sb.features.new + sb.features.started + sb.features.resolved
+            }}</span>
+            <div class="status-bars">
+              <div class="status-row">
+                <span class="status-label">New</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-new"
+                    [style.width.%]="
+                      getPercent(
+                        sb.features.new,
+                        sb.features.new + sb.features.started + sb.features.resolved
+                      )
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.features.new }}</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">In Progress</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-progress"
+                    [style.width.%]="
+                      getPercent(
+                        sb.features.started,
+                        sb.features.new + sb.features.started + sb.features.resolved
+                      )
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.features.started }}</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Resolved</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-resolved"
+                    [style.width.%]="
+                      getPercent(
+                        sb.features.resolved,
+                        sb.features.new + sb.features.started + sb.features.resolved
+                      )
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.features.resolved }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- QA -->
+    @if (role === UserRoles.QA) {
+      <div class="grid">
+        <div class="card">
+          <div class="icon icon-project">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+          </div>
+          <span class="label">Assigned Projects</span>
+          <span class="value">{{ s.assignedProjectsCount }}</span>
+        </div>
+
+        <div class="card">
+          <div class="icon icon-qa">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 11l3 3L22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg>
+          </div>
+          <span class="label">Issues Reported</span>
+          <span class="value">{{
+            (s.createdBugs?.bugCount ?? 0) + (s.createdBugs?.featureCount ?? 0)
+          }}</span>
+          <div class="breakdown">
+            <div class="row row-bug">
+              <span>Bugs</span>
+              <span>{{ s.createdBugs?.bugCount ?? 0 }}</span>
+            </div>
+            <div class="row row-feature">
+              <span>Features</span>
+              <span>{{ s.createdBugs?.featureCount ?? 0 }}</span>
+            </div>
+          </div>
+        </div>
+
+        @if (s.statusBreakdown; as sb) {
+          <div class="card">
+            <span class="label">Bug Status</span>
+            <span class="value">{{ sb.bugs.new + sb.bugs.started + sb.bugs.resolved }}</span>
+            <div class="status-bars">
+              <div class="status-row">
+                <span class="status-label">New</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-new"
+                    [style.width.%]="
+                      getPercent(sb.bugs.new, sb.bugs.new + sb.bugs.started + sb.bugs.resolved)
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.bugs.new }}</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">In Progress</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-progress"
+                    [style.width.%]="
+                      getPercent(sb.bugs.started, sb.bugs.new + sb.bugs.started + sb.bugs.resolved)
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.bugs.started }}</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Resolved</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-resolved"
+                    [style.width.%]="
+                      getPercent(sb.bugs.resolved, sb.bugs.new + sb.bugs.started + sb.bugs.resolved)
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.bugs.resolved }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="label">Feature Status</span>
+            <span class="value">{{
+              sb.features.new + sb.features.started + sb.features.resolved
+            }}</span>
+            <div class="status-bars">
+              <div class="status-row">
+                <span class="status-label">New</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-new"
+                    [style.width.%]="
+                      getPercent(
+                        sb.features.new,
+                        sb.features.new + sb.features.started + sb.features.resolved
+                      )
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.features.new }}</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">In Progress</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-progress"
+                    [style.width.%]="
+                      getPercent(
+                        sb.features.started,
+                        sb.features.new + sb.features.started + sb.features.resolved
+                      )
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.features.started }}</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Resolved</span>
+                <div class="bar-track">
+                  <div
+                    class="bar bar-resolved"
+                    [style.width.%]="
+                      getPercent(
+                        sb.features.resolved,
+                        sb.features.new + sb.features.started + sb.features.resolved
+                      )
+                    "
+                  ></div>
+                </div>
+                <span class="status-count">{{ sb.features.resolved }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
 </div>

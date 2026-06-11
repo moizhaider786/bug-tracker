@@ -1,8 +1,4 @@
-import {
-  Controller,
-  ParseArrayPipe,
-  Query,
-} from '@nestjs/common';
+import { Controller, ParseArrayPipe, Query, Req } from '@nestjs/common';
 import { Get } from '@nestjs/common';
 import type { Request } from 'express';
 import { UserRoles } from 'src/types';
@@ -17,5 +13,12 @@ export class UserController {
     roles: UserRoles[],
   ) {
     return await this.userService.findAll(roles);
+  }
+  @Get('projectsAndBugsCount')
+  async getProjectsAndBugsCount(@Req() req: Request) {
+    return await this.userService.getUserProjectsAndBugsCount(
+      req.user!.id,
+      req.user!.role,
+    );
   }
 }

@@ -67,7 +67,7 @@ export class BugFormComponent implements OnInit, OnChanges {
   form!: FormGroup;
 
   ngOnInit(): void {
-    const currentUser = JSON.parse(this.authService.getUser()!);
+    const currentUser = this.authService.getUser()!;
     this.isDeveloper = currentUser.role === UserRoles.DEVELOPER;
     this.isQA = currentUser.role === UserRoles.QA;
 

@@ -9,10 +9,13 @@ import { Users } from 'src/user/user.entity';
 import { AuthService } from './auth.service';
 import { UserService } from 'src/user/user.service';
 import { AuthController } from './auth.controller';
+import { Projects } from 'src/project/project.entity';
+import { Bugs } from 'src/bug/bug.entity';
+import { ProjectsToUsers } from 'src/project/project-to-user.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Users]),
+    TypeOrmModule.forFeature([Users, Projects, Bugs, ProjectsToUsers]),
     JwtModule.register({
       global: true,
     }),
