@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { ModalType } from '../../types/types';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ModalService {
   visible = signal<boolean>(false);
@@ -13,6 +13,9 @@ export class ModalService {
     this.type.set(ModalType.SUCCESS);
     this.message.set(msg);
     this.visible.set(true);
+    setTimeout(() => {
+      this.close();
+    }, 2000);
   }
 
   showError(msg: string) {

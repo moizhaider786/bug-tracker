@@ -100,3 +100,25 @@
     transform: translateY(0);
   }
 }
+
+.toast-success {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 10000;
+
+  padding: 0.875rem 1.25rem;
+  min-width: 250px;
+  max-width: 400px;
+
+  background: #28a745;
+  color: white;
+  border-radius: 6px;
+
+  font-size: 0.95rem;
+  font-weight: 500;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  animation: slideInRight 0.25s ease-out;
+}
