@@ -1,4 +1,5 @@
 import { BugStatus, BugType } from "../../types/types"
+import { Project } from "./project.model"
 export interface Bug {
     id: number,
     title: string,
@@ -12,5 +13,6 @@ export interface Bug {
     developerId: number,
     createdBy: number,
     createdAt: Date,
-    updatedAt: Date
+    updatedAt: Date,
+    project?: Partial<Project>
 }

@@ -44,13 +44,14 @@ export class BugController {
     @Query('pageSize') pageSize = 10,
     @Query('projectId') projectId?: number,
   ) {
-    return await this.bugService.getBugs(
+    const [bugs, total] = (await this.bugService.getBugs(
       req.user!.id,
       req.user!.role,
       page,
       pageSize,
       projectId,
-    );
+    )) || [[], 0];
+    return { data: bugs, total };
   }
   @Get(':id')
   async getBugById(@Req() req: Request, @Param('id') id: number) {

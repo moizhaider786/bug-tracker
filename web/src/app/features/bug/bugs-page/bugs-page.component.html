@@ -19,14 +19,20 @@
           <h2>{{ group.projectName }}</h2>
         </summary>
         <div class="bugs-wrapper">
-          <app-bug-list
-            [preloadedBugs]="group.bugs"
-            [projectId]="group.projectId"
-          ></app-bug-list>
+          <app-bug-list [preloadedBugs]="group.bugs" [projectId]="group.projectId" />
         </div>
       </details>
     } @empty {
       <p class="empty-state">No bugs found.</p>
     }
   </div>
+
+  @if (total() > pageSize) {
+    <app-pagination
+      [total]="total()"
+      [currentPage]="currentPage()"
+      [pageSize]="pageSize"
+      (pageChange)="onPageChange($event)"
+    />
+  }
 </div>

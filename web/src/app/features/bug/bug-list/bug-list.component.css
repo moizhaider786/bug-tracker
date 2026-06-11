@@ -32,6 +32,10 @@
   border: 1px solid var(--color-border);
 }
 
+.bug-status-badge {
+  margin-left: 5px;
+}
+
 .bug-type-badge {
   background: var(--color-bg);
   color: var(--color-text);

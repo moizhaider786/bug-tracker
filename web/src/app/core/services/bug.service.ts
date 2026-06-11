@@ -11,6 +11,7 @@ import { DEFAULT_PAGE_SIZE } from '../../lib/constants';
 export class BugService {
   private apiUrl = `${environment.apiUrl}/bug`;
   bugs = signal<Bug[]>([]);
+  total = signal<number>(0);
   http = inject(HttpClient);
 
   createBug(data: CreateBugDto): Observable<Bug> {
@@ -21,15 +22,18 @@ export class BugService {
     projectId?: number,
     page = 1,
     pageSize = DEFAULT_PAGE_SIZE,
-  ): Observable<GetBugsResponseDto[]> {
+  ): Observable<GetBugsResponseDto> {
     let params = new HttpParams().set('page', page).set('pageSize', pageSize);
 
     if (projectId) {
       params = params.set('projectId', projectId);
     }
-    return this.http
-      .get<GetBugsResponseDto[]>(this.apiUrl, { params })
-      .pipe(tap((bugs) => this.bugs.set(bugs)));
+    return this.http.get<GetBugsResponseDto>(this.apiUrl, { params }).pipe(
+      tap((res) => {
+        this.bugs.set(res.data);
+        this.total.set(res.total);
+      }),
+    );
   }
 
   getBugById(id: number): Observable<Bug> {

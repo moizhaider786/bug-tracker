@@ -180,7 +180,7 @@ export class BugService {
         take: pageSize,
       });
     } else if (role === UserRoles.QA) {
-      return await this.bugsRepo.find({
+      return await this.bugsRepo.findAndCount({
         where: {
           createdBy: userId,
           ...(projectId && { projectId }),
@@ -200,7 +200,7 @@ export class BugService {
         take: pageSize,
       });
     } else if (role === UserRoles.DEVELOPER) {
-      return await this.bugsRepo.find({
+      return await this.bugsRepo.findAndCount({
         where: {
           developerId: userId,
           ...(projectId && { projectId }),

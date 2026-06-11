@@ -6,6 +6,7 @@ import {
   SimpleChanges,
   signal,
   OnInit,
+  effect,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -26,18 +27,31 @@ export class BugListComponent implements OnChanges, OnInit {
   bugService = inject(BugService);
   authService = inject(AuthService);
   modalService = inject(ModalService);
+
   preloadedBugs = input<Bug[] | null>(null);
   projectId = input<number>(0);
 
   bugs = signal<Bug[]>([]);
   isQA = this.authService.hasRole(UserRoles.QA);
   isDev = this.authService.hasRole(UserRoles.DEVELOPER);
+
+  constructor() {
+    // Reacts every time preloadedBugs signal changes (including after API responds)
+    effect(() => {
+      const preloaded = this.preloadedBugs();
+      if (preloaded !== null) {
+        this.bugs.set(preloaded);
+      }
+    });
+  }
+
   ngOnInit(): void {
-    const preloaded = this.preloadedBugs();
-    if (preloaded !== null) {
-      this.bugs.set(preloaded);
+    // Only self-fetch if no preloaded bugs AND a projectId is given
+    if (this.preloadedBugs() === null && this.projectId()) {
+      this.loadBugs();
     }
   }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (this.preloadedBugs() !== null) return;
     if (changes['projectId'] && this.projectId()) {
@@ -47,8 +61,9 @@ export class BugListComponent implements OnChanges, OnInit {
 
   loadBugs(): void {
     this.bugService.getBugs(this.projectId()).subscribe({
-      next: (bugs) => this.bugs.set(bugs),
-      error: (err) => this.modalService.showError('Error loading bugs: ' + (err.error?.message || err.message)),
+      next: (res) => this.bugs.set(res.data),
+      error: (err) =>
+        this.modalService.showError('Error loading bugs: ' + (err.error?.message || err.message)),
     });
   }
 
@@ -62,7 +77,8 @@ export class BugListComponent implements OnChanges, OnInit {
           this.loadBugs();
         }
       },
-      error: (err) => this.modalService.showError('Error deleting bug: ' + (err.error?.message || err.message)),
+      error: (err) =>
+        this.modalService.showError('Error deleting bug: ' + (err.error?.message || err.message)),
     });
   }
 }
