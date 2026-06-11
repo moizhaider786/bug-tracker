@@ -21,7 +21,12 @@ import { ModalService } from '../services/modal.service';
         <nav class="sidebar-nav">
           <ul>
             <li>
-              <a routerLink="/" routerLinkActive="active">Dashboard</a>
+              <a
+                routerLink="/"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                >Dashboard</a
+              >
             </li>
             <li>
               <a routerLink="/projects" routerLinkActive="active">Projects</a>
@@ -38,8 +43,14 @@ import { ModalService } from '../services/modal.service';
           </ul>
         </nav>
         <div class="sidebar-footer">
-          <button (click)="logout()" class="logout-btn btn-secondary with-icon" style="background: transparent; border-color: #4b5563; color: #d1d5db; justify-content: flex-start; width: 100%;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          <button
+            (click)="logout()"
+            class="logout-btn btn-secondary with-icon"
+            style="background: transparent; border-color: #4b5563; color: #d1d5db; justify-content: flex-start; width: 100%;"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+            </svg>
             <span>Logout</span>
           </button>
         </div>
@@ -59,7 +70,7 @@ import { ModalService } from '../services/modal.service';
         left: 0;
         top: 0;
         padding: 1rem;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
       }
       .sidebar-header {
         border-bottom: 1px solid #374151;
@@ -86,7 +97,9 @@ import { ModalService } from '../services/modal.service';
         color: #d1d5db;
         text-decoration: none;
         border-radius: 6px;
-        transition: background-color 0.2s, color 0.2s;
+        transition:
+          background-color 0.2s,
+          color 0.2s;
       }
       .sidebar-nav a:hover {
         background-color: #374151;
@@ -111,7 +124,9 @@ import { ModalService } from '../services/modal.service';
         color: #d1d5db;
         border: 1px solid #4b5563;
         border-radius: 6px;
-        transition: background-color 0.2s, color 0.2s;
+        transition:
+          background-color 0.2s,
+          color 0.2s;
         font-weight: 500;
       }
       .logout-btn:hover {
