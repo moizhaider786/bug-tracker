@@ -150,23 +150,35 @@ export class BugService {
     }
   }
 
-  async getBugs(userId: number, role: UserRoles, projectId?: number) {
+  async getBugs(
+    userId: number,
+    role: UserRoles,
+    page: number,
+    pageSize: number,
+    projectId?: number,
+  ) {
     if (role === UserRoles.MANAGER) {
-      const projects = await this.projectsRepo.find({
+      return await this.bugsRepo.findAndCount({
         where: {
-          createdBy: userId,
           ...(projectId && { id: projectId }),
-        },
-        relations: { bugs: true },
-        select: { bugs: true },
-        order: {
-          bugs: {
-            createdAt: 'DESC',
+          project: {
+            createdBy: userId,
           },
         },
+        order: {
+          createdAt: 'DESC',
+        },
+        relations: {
+          project: true,
+        },
+        select: {
+          project: {
+            name: true,
+          },
+        },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
       });
-
-      return projects.flatMap((project) => project.bugs);
     } else if (role === UserRoles.QA) {
       return await this.bugsRepo.find({
         where: {
@@ -176,6 +188,16 @@ export class BugService {
         order: {
           createdAt: 'DESC',
         },
+        relations: {
+          project: true,
+        },
+        select: {
+          project: {
+            name: true,
+          },
+        },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
       });
     } else if (role === UserRoles.DEVELOPER) {
       return await this.bugsRepo.find({
@@ -186,6 +208,16 @@ export class BugService {
         order: {
           createdAt: 'DESC',
         },
+        relations: {
+          project: true,
+        },
+        select: {
+          project: {
+            name: true,
+          },
+        },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
       });
     }
   }

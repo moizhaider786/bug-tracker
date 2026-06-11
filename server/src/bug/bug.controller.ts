@@ -40,11 +40,15 @@ export class BugController {
   @Get()
   async getUserBugs(
     @Req() req: Request,
+    @Query('page') page = 1,
+    @Query('pageSize') pageSize = 10,
     @Query('projectId') projectId?: number,
   ) {
     return await this.bugService.getBugs(
       req.user!.id,
       req.user!.role,
+      page,
+      pageSize,
       projectId,
     );
   }
