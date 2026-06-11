@@ -9,12 +9,13 @@ import { BugFormPageComponent } from './features/bug/bug-form-page/bug-form-page
 import { BugsPageComponent } from './features/bug/bugs-page/bugs-page.component';
 import { BugDetailPageComponent } from './features/bug/bug-detail-page/bug-detail-page.component';
 import { ProfilePageComponent } from './features/profile/profile-page/profile-page.component';
+import { NotFoundPage } from './core/not-found/not-found-page.component';
 
 export const routes: Routes = [
   { path: 'signup', component: AuthPageComponent },
   { path: 'login', component: AuthPageComponent },
   {
-    path: 'dashboard',
+    path: '',
     component: DashboardPageComponent,
     canActivate: [AuthGuard],
   },
@@ -63,5 +64,9 @@ export const routes: Routes = [
     path: 'profile',
     component: ProfilePageComponent,
     canActivate: [AuthGuard],
+  },
+  {
+    path: '**',
+    component: NotFoundPage,
   },
 ];

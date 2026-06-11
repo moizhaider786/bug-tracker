@@ -1,1 +1,1 @@
-export const NonSidebarRoutes = ['login', 'signup', ''];
+export const NonSidebarRoutes = ['login', 'signup'];

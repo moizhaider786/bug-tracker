@@ -1,0 +1,51 @@
+<div class="not-found-container">
+  <div class="not-found-content">
+
+    <!-- Bug illustration -->
+    <div class="bug-visual" aria-hidden="true">
+      <svg class="bug-icon" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Body -->
+        <ellipse cx="40" cy="46" rx="16" ry="20" fill="var(--color-primary)" opacity="0.15"/>
+        <ellipse cx="40" cy="46" rx="16" ry="20" stroke="var(--color-primary)" stroke-width="2.5"/>
+        <!-- Head -->
+        <circle cx="40" cy="24" r="10" fill="var(--color-primary)" opacity="0.15"/>
+        <circle cx="40" cy="24" r="10" stroke="var(--color-primary)" stroke-width="2.5"/>
+        <!-- Eyes -->
+        <circle cx="36" cy="22" r="2" fill="var(--color-primary)"/>
+        <circle cx="44" cy="22" r="2" fill="var(--color-primary)"/>
+        <!-- Antennae -->
+        <line x1="36" y1="14" x2="30" y2="6" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="44" y1="14" x2="50" y2="6" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="30" cy="6" r="2" fill="var(--color-primary)"/>
+        <circle cx="50" cy="6" r="2" fill="var(--color-primary)"/>
+        <!-- Left legs -->
+        <line x1="24" y1="38" x2="12" y2="34" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="24" y1="46" x2="10" y2="46" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="24" y1="54" x2="12" y2="58" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round"/>
+        <!-- Right legs -->
+        <line x1="56" y1="38" x2="68" y2="34" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="56" y1="46" x2="70" y2="46" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="56" y1="54" x2="68" y2="58" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round"/>
+        <!-- Body segment dividers -->
+        <line x1="25" y1="42" x2="55" y2="42" stroke="var(--color-primary)" stroke-width="1.5" opacity="0.5"/>
+        <line x1="24" y1="52" x2="56" y2="52" stroke="var(--color-primary)" stroke-width="1.5" opacity="0.5"/>
+      </svg>
+      <div class="error-code">404</div>
+    </div>
+
+    <!-- Message -->
+    <h1 class="not-found-title">Page Not Found</h1>
+    <p class="not-found-description">
+      The page you're looking for doesn't exist.
+    </p>
+
+    <!-- Actions -->
+    <div class="not-found-actions">
+      <a routerLink="/" class="btn-primary with-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Go to Dashboard
+      </a>
+    </div>
+
+  </div>
+</div>

@@ -21,7 +21,7 @@ import { ModalService } from '../services/modal.service';
         <nav class="sidebar-nav">
           <ul>
             <li>
-              <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+              <a routerLink="/" routerLinkActive="active">Dashboard</a>
             </li>
             <li>
               <a routerLink="/projects" routerLinkActive="active">Projects</a>

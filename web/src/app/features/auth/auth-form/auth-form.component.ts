@@ -58,7 +58,7 @@ export class AuthFormComponent {
       this.authService.login({ email, password } as SignupDto).subscribe({
         next: (res) => {
           this.modalService.showSuccess('Login successful');
-          this.router.navigate(["/dashboard"])
+          this.router.navigate(["/"])
         },
         error: (error) => {
           this.modalService.showError(error.error.message || 'Login Failed');
