@@ -2,14 +2,14 @@
 
   <!-- Success Toast -->
   @if (modalService.type() === modalType.SUCCESS) {
-    <div class="toast-success">
+    <div class="toast-success" data-cy="success-toast">
       {{ modalService.message() }}
     </div>
   }
 
   <!-- Error Modal -->
   @if (modalService.type() === modalType.ERROR) {
-    <div class="modal-backdrop" (click)="modalService.close()">
+    <div class="modal-backdrop" (click)="modalService.close()" data-cy="error-modal">
       <div class="modal-content error" (click)="$event.stopPropagation()">
         <div class="modal-header">
           <p class="title error-text">Error</p>

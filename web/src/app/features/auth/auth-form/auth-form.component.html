@@ -1,4 +1,4 @@
-<form class="auth-form" #authForm="ngForm" (ngSubmit)="onSubmit()">
+<form class="auth-form" #authForm="ngForm" (ngSubmit)="onSubmit()" data-cy="auth-form">
   <h3 class="form-title">{{ isSignupForm() ? 'Signup' : 'Login' }}</h3>
 
   @if (isSignupForm()) {
@@ -11,6 +11,7 @@
       [(ngModel)]="formData.name"
       #name="ngModel"
       required
+      data-cy="name-input"
     />
     @if (name.invalid && (name.touched || name.dirty)) {
       <div class="error-message">Name is required</div>
@@ -27,6 +28,7 @@
     #email="ngModel"
     required
     email
+    data-cy="email-input"
   />
   @if (email.invalid && (email.touched || email.dirty)) {
     @if (email.hasError('required')) {
@@ -45,6 +47,7 @@
       [(ngModel)]="formData.role"
       #role="ngModel"
       required
+      data-cy="role-select"
     >
       @for (role of userRoles; track $index) {
         <option [value]="role">{{ role }}</option>
@@ -66,6 +69,7 @@
     #password="ngModel"
     required
     minlength="6"
+    data-cy="password-input"
   />
   @if (password.invalid && (password.touched || password.dirty)) {
     @if (password.hasError('required')) {
@@ -86,6 +90,7 @@
       #confirmPassword="ngModel"
       required
       minlength="6"
+      data-cy="confirm-password-input"
     />
     @if (confirmPassword.invalid && (confirmPassword.touched || confirmPassword.dirty)) {
       @if (confirmPassword.hasError('required')) {
@@ -100,6 +105,7 @@
     class="btn-primary"
     style="width: 100%; margin-top: 1rem; padding-top: 15px; padding-bottom: 15px"
     [disabled]="!authForm.form.valid"
+    data-cy="submit-btn"
   >
     {{ isSignupForm() ? 'Signup' : 'Login' }}
   </button>
