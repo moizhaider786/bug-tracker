@@ -10,7 +10,6 @@ import { QueryFailedError, Repository } from 'typeorm';
 import { CreateBugDto } from './dto/create-bug.dto';
 import { Bugs } from './bug.entity';
 import { BugStatus, BugType, NotificationTypes, UserRoles } from 'src/types';
-import { Projects } from 'src/project/project.entity';
 import { ProjectsToUsers } from 'src/project/project-to-user.entity';
 import { UpdateBugDto } from './dto/update-bug.dto';
 import { NotificationService } from 'src/notification/notification.service';
@@ -19,8 +18,6 @@ import { NotificationService } from 'src/notification/notification.service';
 export class BugService {
   constructor(
     @InjectRepository(Bugs) private readonly bugsRepo: Repository<Bugs>,
-    @InjectRepository(Projects)
-    private readonly projectsRepo: Repository<Projects>,
     @InjectRepository(ProjectsToUsers)
     private readonly projectsToUsersRepo: Repository<ProjectsToUsers>,
     private readonly notificationService: NotificationService,
@@ -85,11 +82,11 @@ export class BugService {
         if (!bug) {
           throw new ForbiddenException('You are not assigned to this bug');
         }
-        if (bug.type === BugType.BUG && bug.status === BugStatus.COMPLETED)
+        if (bug.type === BugType.BUG && data.status === BugStatus.COMPLETED)
           throw new BadRequestException('Invalid bug status against bug type.');
         else if (
           bug.type === BugType.FEATURE &&
-          bug.status === BugStatus.RESOLVED
+          data.status === BugStatus.RESOLVED
         )
           throw new BadRequestException('Invalid bug status against bug type.');
         bug.status = data.status ?? bug.status;
@@ -118,7 +115,13 @@ export class BugService {
         if (!bug) {
           throw new ForbiddenException('You did not create this bug');
         }
-        Object.assign(bug, data);
+        if (bug.type === BugType.BUG && data.status === BugStatus.COMPLETED)
+          throw new BadRequestException('Invalid bug status against bug type.');
+        else if (
+          bug.type === BugType.FEATURE &&
+          data.status === BugStatus.RESOLVED
+        )
+          Object.assign(bug, data);
         const updatedBug = await this.bugsRepo.save(bug);
 
         this.notificationService
