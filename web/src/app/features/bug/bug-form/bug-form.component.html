@@ -3,22 +3,22 @@
     @if (isDeveloper) {
       <div class="form-group">
         <label for="status">Status *</label>
-        <select id="status" formControlName="status">
+        <select id="status" formControlName="status" data-cy="status-select">
           @for (s of bugStatusOptions(); track s) {
             <option [value]="s">{{ s }}</option>
           }
         </select>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" data-cy="time-inputs-container">
         <p>Time Spent</p>
         <label for="hours">Hours</label>
-        <input id="hours" type="number" formControlName="hours" />
+        <input id="hours" type="number" formControlName="hours" data-cy="hour-input" />
         @if (form.get('hours')?.errors?.['min'] && form.get('hours')?.touched) {
           <div class="error">Hours cannot be negative.</div>
         }
         <label for="minutes">Minutes</label>
-        <input id="minutes" type="number" formControlName="minutes" />
+        <input id="minutes" type="number" formControlName="minutes" data-cy="minute-input" />
         @if (form.get('minutes')?.errors?.['min'] && form.get('minutes')?.touched) {
           <div class="error">Minutes cannot be negative.</div>
         }
@@ -27,7 +27,7 @@
     } @else {
       <div class="form-group">
         <label for="title">Title *</label>
-        <input id="title" type="text" formControlName="title" />
+        <input id="title" type="text" formControlName="title" data-cy="title-input" />
         @if (form.get('title')?.invalid && form.get('title')?.touched) {
           <div class="error">Title is required (max 280 chars).</div>
         }
@@ -35,7 +35,7 @@
 
       <div class="form-group">
         <label for="description">Description *</label>
-        <textarea id="description" formControlName="description" rows="4"></textarea>
+        <textarea id="description" formControlName="description" rows="4" data-cy="description-input"></textarea>
         @if (form.get('description')?.invalid && form.get('description')?.touched) {
           <div class="error">Description is required.</div>
         }
@@ -68,7 +68,7 @@
 
       <div class="form-group">
         <label for="developerId">Assign Developer *</label>
-        <select id="developerId" formControlName="developerId">
+        <select id="developerId" formControlName="developerId" data-cy="developer-select">
           <option [ngValue]="null" disabled>Select a developer</option>
           @for (dev of developers(); track dev.id) {
             <option [value]="dev.id">{{ dev.name }} ({{ dev.email }})</option>
@@ -116,6 +116,7 @@
           class="btn-primary"
           style="padding-top: 15px; padding-bottom: 15px"
           [disabled]="isSubmitting()"
+          data-cy="update-bug-btn"
         >
           {{ isSubmitting() ? 'Saving...' : 'Update Bug' }}
         </button>
@@ -125,6 +126,7 @@
           class="btn-primary"
           style="padding-top: 15px; padding-bottom: 15px"
           [disabled]="isSubmitting()"
+          data-cy="create-bug-btn"
         >
           {{ isSubmitting() ? 'Saving...' : 'Create Bug' }}
         </button>

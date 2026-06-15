@@ -26,7 +26,11 @@
     <div class="bugs-header">
       <h3>Bugs</h3>
       @if (isQA) {
-        <a class="btn-primary with-icon" [routerLink]="['/projects', projectId(), 'bugs', 'new']">
+        <a
+          class="btn-primary with-icon"
+          [routerLink]="['/projects', projectId(), 'bugs', 'new']"
+          data-cy="report-bug-link"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M12 5v14M5 12h14" />
           </svg>

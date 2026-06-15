@@ -1,15 +1,15 @@
 @if (isAuthorized()) {
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="project-form">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="project-form" data-cy="project-form">
     <div class="form-group">
       <label for="name">Project Name:</label>
-      <input class="form-input" type="text" id="name" formControlName="name" />
+      <input class="form-input" type="text" id="name" formControlName="name" data-cy="title-input"/>
       @if (form.controls['name'].invalid && form.controls['name'].touched) {
         <div class="error">Project name is required.</div>
       }
     </div>
 
     <div class="form-group">
-      <label for="description">Description:</label>
+      <label for="description" data-cy="description-input">Description:</label>
       <textarea
         class="form-input"
         id="description"
@@ -35,6 +35,7 @@
         type="submit"
         style="padding-top: 15px; padding-bottom: 15px; font-size: 0.9rem"
         [disabled]="form.invalid || form.disabled"
+        data-cy="submit-btn"
       >
         {{ isEditForm() ? 'Update Project' : 'Create Project' }}
       </button>

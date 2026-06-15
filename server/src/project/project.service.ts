@@ -260,4 +260,14 @@ export class ProjectService {
     }
     return project.projectUsers.map((m) => m.user).filter((user) => !!user);
   }
+  async deleteProject(id: number, reqUserId: number) {
+    const response = await this.projectRepo.delete({
+      id,
+      createdBy: reqUserId,
+    });
+    if (response.affected === 0) {
+      throw new ForbiddenException('You are not the creator of this project');
+    }
+    return response;
+  }
 }

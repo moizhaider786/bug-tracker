@@ -45,7 +45,7 @@ export class Bugs {
   @Column()
   projectId!: number;
 
-  @ManyToOne(() => Projects, (project) => project.bugs)
+  @ManyToOne(() => Projects, (project) => project.bugs, {onDelete: "CASCADE"})
   @JoinColumn({ name: 'projectId' })
   project!: Projects;
 

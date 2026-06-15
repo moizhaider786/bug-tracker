@@ -2,7 +2,7 @@
   <div class="header-actions">
     <h1>Projects</h1>
     @if (authService.hasRole(userRole.MANAGER)) {
-      <button class="btn-primary with-icon" (click)="openProjectForm(false)">
+      <button class="btn-primary with-icon" (click)="openProjectForm(false)" data-cy="create-project-btn">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
         <span>Create Project</span>
       </button>

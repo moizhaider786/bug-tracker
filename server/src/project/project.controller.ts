@@ -32,6 +32,16 @@ export class ProjectController {
     return await this.projectService.createProject(data);
   }
 
+  @Roles(UserRoles.MANAGER)
+  @Delete(':id')
+  async deleteProject(
+    @Req() req: Request,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    console.log(req.user?.id, id)
+    return await this.projectService.deleteProject(id, req.user!.id);
+  }
+
   @Get()
   async getProjects(
     @Req() req: Request,
@@ -42,7 +52,7 @@ export class ProjectController {
       req.user!.id,
       req.user!.role,
       page,
-      pageSize
+      pageSize,
     );
   }
 
