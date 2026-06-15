@@ -226,7 +226,25 @@ export class BugService {
   }
 
   async getBugById(id: number) {
-    return await this.bugsRepo.findOne({ where: { id } });
+    return await this.bugsRepo.findOne({
+      where: { id },
+      relations: {
+        project: true,
+        creator: true,
+        developer: true,
+      },
+      select: {
+        project: {
+          name: true,
+        },
+        creator: {
+          name: true,
+        },
+        developer: {
+          name: true,
+        },
+      },
+    });
   }
 
   async deleteBug(id: number, reqUserId: number, role: UserRoles) {

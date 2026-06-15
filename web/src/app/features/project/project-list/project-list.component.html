@@ -6,7 +6,11 @@
         <p>{{ project.description }}</p>
       </div>
       <div class="project-actions">
-        <a [routerLink]="['/projects', project.id]" class="btn-primary with-icon" data-cy="details-btn">
+        <a
+          [routerLink]="['/projects', project.id]"
+          class="btn-primary with-icon"
+          data-cy="details-btn"
+        >
           <span>Details</span>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M5 12h14M12 5l7 7-7 7" />
@@ -53,10 +57,12 @@
   } @empty {
     <p class="empty-msg">No projects found.</p>
   }
-  <app-pagination
-    [total]="projectService.totalProjects()"
-    [currentPage]="currentPage"
-    [pageSize]="pageSize"
-    (pageChange)="onPageChange($event)"
-  />
+  <div class="pagination-container">
+    <app-pagination
+      [total]="projectService.totalProjects()"
+      [currentPage]="currentPage"
+      [pageSize]="pageSize"
+      (pageChange)="onPageChange($event)"
+    />
+  </div>
 </div>

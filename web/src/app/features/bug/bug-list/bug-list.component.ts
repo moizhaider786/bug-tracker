@@ -15,11 +15,15 @@ import { AuthService } from '../../../core/services/auth.service';
 import { Bug } from '../../../core/models/bug.model';
 import { UserRoles } from '../../../types/types';
 import { ModalService } from '../../../core/services/modal.service';
+import { BugDetailComponent } from '../bug-detail-page/bug-detail.component';
+import { HttpErrorResponse } from '@angular/common/http';
+import { DEFAULT_PAGE_SIZE } from '../../../lib/constants';
+import { PaginationComponent } from '../../../core/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-bug-list',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, BugDetailComponent, PaginationComponent],
   templateUrl: './bug-list.component.html',
   styleUrl: './bug-list.component.css',
 })
@@ -28,57 +32,55 @@ export class BugListComponent implements OnChanges, OnInit {
   authService = inject(AuthService);
   modalService = inject(ModalService);
 
-  preloadedBugs = input<Bug[] | null>(null);
   projectId = input<number>(0);
 
   bugs = signal<Bug[]>([]);
+  readonly pageSize = DEFAULT_PAGE_SIZE;
+
+  total = signal<number>(0);
+  currentPage = signal<number>(1);
   isQA = this.authService.hasRole(UserRoles.QA);
   isDev = this.authService.hasRole(UserRoles.DEVELOPER);
 
-  constructor() {
-    // Reacts every time preloadedBugs signal changes (including after API responds)
-    effect(() => {
-      const preloaded = this.preloadedBugs();
-      if (preloaded !== null) {
-        this.bugs.set(preloaded);
-      }
-    });
-  }
+  selectedBugId = signal<number | undefined>(undefined);
 
   ngOnInit(): void {
-    // Only self-fetch if no preloaded bugs AND a projectId is given
-    if (this.preloadedBugs() === null && this.projectId()) {
-      this.loadBugs();
-    }
+    this.loadBugs(1);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.preloadedBugs() !== null) return;
     if (changes['projectId'] && this.projectId()) {
-      this.loadBugs();
+      this.loadBugs(1);
     }
   }
 
-  loadBugs(): void {
-    this.bugService.getBugs(this.projectId()).subscribe({
-      next: (res) => this.bugs.set(res.data),
-      error: (err) =>
-        this.modalService.showError('Error loading bugs: ' + (err.error?.message || err.message)),
+  private loadBugs(page: number): void {
+    this.bugService.getBugs(undefined, page, this.pageSize).subscribe({
+      next: (res) => {
+        this.bugs.set(res.data);
+        this.total.set(res.total);
+        this.currentPage.set(page);
+      },
+      error: (err: HttpErrorResponse) =>
+        this.modalService.showError('Failed to load bugs: ' + (err.error?.message || err.message)),
     });
+  }
+
+  onPageChange(page: number): void {
+    this.loadBugs(page);
   }
 
   deleteBug(bugId: number): void {
     if (!confirm('Are you sure you want to delete this bug?')) return;
     this.bugService.deleteBug(bugId).subscribe({
       next: () => {
-        if (this.preloadedBugs() !== null) {
-          this.bugs.update((list) => list.filter((b) => b.id !== bugId));
-        } else {
-          this.loadBugs();
-        }
+        this.loadBugs(1);
       },
       error: (err) =>
         this.modalService.showError('Error deleting bug: ' + (err.error?.message || err.message)),
     });
+  }
+  closeBugDetails() {
+    this.selectedBugId.set(undefined);
   }
 }

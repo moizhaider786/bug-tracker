@@ -40,15 +40,7 @@
     </div>
 
     @if (projectId()) {
-      <app-bug-list [preloadedBugs]="bugs()" [projectId]="projectId()" />
-      @if (bugsTotal() > pageSize) {
-        <app-pagination
-          [total]="bugsTotal()"
-          [currentPage]="bugsPage()"
-          [pageSize]="pageSize"
-          (pageChange)="onPageChange($event)"
-        />
-      }
+      <app-bug-list [projectId]="projectId()" />
     }
   </div>
 </div>

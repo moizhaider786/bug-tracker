@@ -1,0 +1,70 @@
+<div class="bug-detail-container" *ngIf="!isLoading()">
+  @if (error()) {
+    <div class="error-state">
+      {{ error() }}
+    </div>
+  } @else if (bug(); as b) {
+    <div class="bug-content">
+      <div class="bug-header">
+        <div class="header-info">
+          <div class="badge-container">
+            <span class="bug-type-badge type-{{ b.type.toLowerCase() }}">{{ b.type }}</span>
+            <span class="bug-status-badge status-{{ b.status.toLowerCase() }}">
+              {{ b.status }}
+            </span>
+          </div>
+          <h2 class="header-title">{{ b.title }}</h2>
+          <span class="header-metadata">BUG {{b.id}} . {{b.project!.name!}} </span>
+        </div>
+        @if (isQA || isDev) {
+          <div class="header-actions">
+            <button class="edit-btn">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M11.3482 0.5625L9.81696 2.09375L13.8795 6.15625L15.4107 4.625C15.7857 4.22917 15.9732 3.76042 15.9732 3.21875C15.9732 2.69792 15.7857 2.22917 15.4107 1.8125L14.1607 0.5625C13.7649 0.1875 13.2961 0 12.7545 0C12.2336 0 11.7649 0.1875 11.3482 0.5625ZM9.12946 2.78125L1.84821 10.0938C1.51488 10.4062 1.2753 10.7917 1.12946 11.25L0.0357143 15C-0.047619 15.2917 0.014881 15.5417 0.223214 15.75C0.431548 15.9583 0.681548 16.0208 0.973214 15.9375L4.72321 14.8438C5.16071 14.6979 5.54613 14.4688 5.87946 14.1562L13.192 6.84375L9.12946 2.78125Z"
+                  fill="#2563EB"
+                />
+              </svg>
+            </button>
+            @if (isQA) {
+              <button class="delete-btn">
+                <svg
+                  width="14"
+                  height="16"
+                  viewBox="0 0 14 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4.21875 0.5625C4.40625 0.208333 4.70833 0.0208333 5.125 0H8.875C9.29167 0.0208333 9.59375 0.208333 9.78125 0.5625L10 1H13C13.2917 1 13.5312 1.09375 13.7188 1.28125C13.9062 1.46875 14 1.70833 14 2C14 2.29167 13.9062 2.53125 13.7188 2.71875C13.5312 2.90625 13.2917 3 13 3H1C0.708333 3 0.46875 2.90625 0.28125 2.71875C0.09375 2.53125 0 2.29167 0 2C0 1.70833 0.09375 1.46875 0.28125 1.28125C0.46875 1.09375 0.708333 1 1 1H4L4.21875 0.5625ZM1 4H13V14C12.9792 14.5625 12.7812 15.0312 12.4062 15.4062C12.0312 15.7812 11.5625 15.9792 11 16H3C2.4375 15.9792 1.96875 15.7812 1.59375 15.4062C1.21875 15.0312 1.02083 14.5625 1 14V4ZM4 6C3.6875 6.02083 3.52083 6.1875 3.5 6.5V13.5C3.52083 13.8125 3.6875 13.9792 4 14C4.3125 13.9792 4.47917 13.8125 4.5 13.5V6.5C4.47917 6.1875 4.3125 6.02083 4 6ZM7 6C6.6875 6.02083 6.52083 6.1875 6.5 6.5V13.5C6.52083 13.8125 6.6875 13.9792 7 14C7.3125 13.9792 7.47917 13.8125 7.5 13.5V6.5C7.47917 6.1875 7.3125 6.02083 7 6ZM10 6C9.6875 6.02083 9.52083 6.1875 9.5 6.5V13.5C9.52083 13.8125 9.6875 13.9792 10 14C10.3125 13.9792 10.4792 13.8125 10.5 13.5V6.5C10.4792 6.1875 10.3125 6.02083 10 6Z"
+                    fill="#DC2626"
+                  />
+                </svg>
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="bug-body">
+        <div class="description-section">
+          <h3 class="section-heading">Description</h3>
+          <p>{{ b.description }}</p>
+        </div>
+
+        <div ></div>
+        <div class="screenshot-section" *ngIf="b.screenShotUrl">
+          <h3 class="section-heading">Screenshot</h3>
+          <img [src]="b.screenShotUrl" alt="Bug Screenshot" class="screenshot-img" />
+        </div>
+      </div>
+    </div>
+  }
+</div>
+<div class="loading-state" *ngIf="isLoading()">Loading bug details...</div>

@@ -7,7 +7,6 @@ import { ProjectMemberPageComponent } from './features/project/project-member-pa
 import { ProjectDetailPageComponent } from './features/project/project-detail-page/project-detail-page.component';
 import { BugFormPageComponent } from './features/bug/bug-form-page/bug-form-page.component';
 import { BugsPageComponent } from './features/bug/bugs-page/bugs-page.component';
-import { BugDetailPageComponent } from './features/bug/bug-detail-page/bug-detail-page.component';
 import { ProfilePageComponent } from './features/profile/profile-page/profile-page.component';
 import { NotFoundPage } from './core/not-found/not-found-page.component';
 
@@ -48,11 +47,6 @@ export const routes: Routes = [
   {
     path: 'bugs',
     component: BugsPageComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'bugs/:id',
-    component: BugDetailPageComponent,
     canActivate: [AuthGuard],
   },
   {

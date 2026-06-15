@@ -3,36 +3,15 @@
     <h1>All Bugs</h1>
     <div class="filter-group">
       <label for="projectFilter">Filter by Project:</label>
-      <select id="projectFilter" [(ngModel)]="selectedProjectId">
+      <!-- <select id="projectFilter" [(ngModel)]="selectedProjectId">
         <option [value]="null">All Projects</option>
         @for (project of projectsWithBugs(); track project.id) {
           <option [value]="project.id">{{ project.name }}</option>
         }
-      </select>
+      </select> -->
     </div>
   </div>
-
-  <div class="projects-list">
-    @for (group of groupedBugs(); track group.projectId) {
-      <details class="project-bugs-collapsible" open>
-        <summary class="project-summary">
-          <h2>{{ group.projectName }}</h2>
-        </summary>
-        <div class="bugs-wrapper">
-          <app-bug-list [preloadedBugs]="group.bugs" [projectId]="group.projectId" />
-        </div>
-      </details>
-    } @empty {
-      <p class="empty-state">No bugs found.</p>
-    }
+  <div class="list-container">
+      <app-bug-list />
   </div>
-
-  @if (total() > pageSize) {
-    <app-pagination
-      [total]="total()"
-      [currentPage]="currentPage()"
-      [pageSize]="pageSize"
-      (pageChange)="onPageChange($event)"
-    />
-  }
 </div>

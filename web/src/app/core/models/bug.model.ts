@@ -1,18 +1,21 @@
-import { BugStatus, BugType } from "../../types/types"
-import { Project } from "./project.model"
+import { BugStatus, BugType } from '../../types/types';
+import { Project } from './project.model';
+import { User } from './user.model';
 export interface Bug {
-    id: number,
-    title: string,
-    description: string,
-    status: BugStatus,
-    type: BugType,
-    deadline?: Date,
-    timelineSeconds: number,
-    screenShotUrl?: string,
-    projectId: number,
-    developerId: number,
-    createdBy: number,
-    createdAt: Date,
-    updatedAt: Date,
-    project?: Partial<Project>
+  id: number;
+  title: string;
+  description: string;
+  status: BugStatus;
+  type: BugType;
+  deadline?: Date;
+  timelineSeconds: number;
+  screenShotUrl?: string;
+  projectId: number;
+  developerId: number;
+  createdBy: number;
+  createdAt: Date;
+  updatedAt: Date;
+  project?: Partial<Project>;
+  developer?: Partial<User>;
+  creator?: Partial<User>;
 }

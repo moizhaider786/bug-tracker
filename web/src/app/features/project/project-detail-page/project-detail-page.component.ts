@@ -33,10 +33,6 @@ export class ProjectDetailPageComponent implements OnInit {
   projectMembers = signal<User[]>([]);
   projectId = signal<number>(0);
 
-  bugs = signal<Bug[]>([]);
-  bugsTotal = signal<number>(0);
-  bugsPage = signal<number>(1);
-
   isQA = this.authService.hasRole(UserRoles.QA);
 
   ngOnInit(): void {
@@ -44,7 +40,6 @@ export class ProjectDetailPageComponent implements OnInit {
       next: (params) => {
         const id = +params['id'];
         this.projectId.set(id);
-        this.bugsPage.set(1);
 
         this.projectService.getProjectDetails(id).subscribe({
           next: (project) => this.project.set(project),
@@ -61,27 +56,8 @@ export class ProjectDetailPageComponent implements OnInit {
               'Error: ' + (err.error?.message || 'Failed to load project members')
             ),
         });
-
-        this.loadBugs(id, 1);
       },
     });
   }
 
-  loadBugs(projectId: number, page: number): void {
-    this.bugService.getBugs(projectId, page, DEFAULT_PAGE_SIZE).subscribe({
-      next: (res) => {
-        this.bugs.set(res.data);
-        this.bugsTotal.set(res.total);
-      },
-      error: (err) =>
-        this.modalService.showError(
-          'Error: ' + (err.error?.message || 'Failed to load bugs')
-        ),
-    });
-  }
-
-  onPageChange(page: number): void {
-    this.bugsPage.set(page);
-    this.loadBugs(this.projectId(), page);
-  }
 }

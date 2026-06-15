@@ -1,4 +1,4 @@
-<div class="bug-list-container">
+<!-- <div class="bug-list-container">
   <div class="bugs-wrapper">
     @for (bug of bugs(); track bug.id) {
       <div class="bug-card">
@@ -69,5 +69,57 @@
     } @empty {
       <p class="empty-state">No bugs reported for this project yet.</p>
     }
+  </div>
+</div> -->
+<div class="wrapper">
+  <div class="bugs-container details-{{ selectedBugId() ? 'open' : 'close' }}">
+    @if (total() > pageSize) {
+      <div class="pagination-container">
+        <app-pagination
+          [total]="total()"
+          [currentPage]="currentPage()"
+          [pageSize]="pageSize"
+          (pageChange)="onPageChange($event)"
+        />
+      </div>
+    }
+    <div class="bugs-list-container">
+      @for (bug of bugs(); track bug.id) {
+        <div class="bug-card" (click)="selectedBugId.set(bug.id)">
+          <!-- Bug Info -->
+          <div class="bug-info-container">
+            <h3 class="bug-title">{{ bug.title }}</h3>
+            <div>
+              <div class="badge-container">
+                <span class="bug-type-badge type-{{ bug.type.toLowerCase() }}">{{ bug.type }}</span>
+                <span class="bug-status-badge status-{{ bug.status.toLowerCase() }}">
+                  {{ bug.status }}
+                </span>
+              </div>
+              @if (bug.deadline) {
+                <p>{{ bug.deadline }}</p>
+              }
+              <!-- Completion bar -->
+              <div></div>
+            </div>
+          </div>
+          <!-- User Info -->
+          <div>
+            <div style="width: 40px; height: 40px; margin-top: 8px">
+              <img
+                style="width: 100%; height: 100%; object-fit: contain"
+                src="assets/img/user-icon.png"
+                alt=""
+              />
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <p class="empty-state">No bugs reported for this project yet.</p>
+      }
+    </div>
+  </div>
+  <div class="details-container details-{{ selectedBugId() ? 'open' : 'close' }}">
+    <app-bug-detail [bugId]="selectedBugId()"></app-bug-detail>
   </div>
 </div>
